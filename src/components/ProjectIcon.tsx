@@ -115,7 +115,9 @@ export function ServerStatusPill({
     );
   }
 
-  const state = health?.state ?? (project.serverType === 'render' ? 'cold-start' : 'online');
+  const state =
+    health?.state ??
+    (project.serverType === 'render' && !project.keepAlive ? 'cold-start' : 'online');
 
   if (state === 'checking' || state === 'waking') {
     return (

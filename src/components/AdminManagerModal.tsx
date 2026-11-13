@@ -68,6 +68,7 @@ interface FormState {
   technicalHighlightsText: string;
   techStackText: string;
   serverType: ServerPlatform;
+  keepAlive: boolean;
   icon: string;
   pinned: boolean;
 }
@@ -84,6 +85,7 @@ function emptyFormState(): FormState {
     technicalHighlightsText: '',
     techStackText: 'React, TypeScript, Tailwind CSS',
     serverType: 'vercel',
+    keepAlive: false,
     icon: 'globe',
     pinned: true,
   };
@@ -102,6 +104,7 @@ function projectToFormState(p: DevHubProject): FormState {
     technicalHighlightsText: p.technicalHighlights.join('\n'),
     techStackText: p.techStack.join(', '),
     serverType: p.serverType,
+    keepAlive: Boolean(p.keepAlive),
     icon: p.icon,
     pinned: p.pinned,
   };
@@ -226,6 +229,7 @@ export function AdminManagerModal({
       liveUrl,
       githubUrl: form.githubUrl.trim() || 'https://github.com/Winter101006',
       serverType: resolvedServer,
+      keepAlive: form.keepAlive,
       icon: form.icon,
       pinned: form.pinned,
     };
@@ -658,15 +662,27 @@ export function AdminManagerModal({
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                <label className="inline-flex cursor-pointer items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-200">
-                  <input
-                    type="checkbox"
-                    checked={form.pinned}
-                    onChange={(e) => setForm({ ...form, pinned: e.target.checked })}
-                    className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  Ghim dự án này lên đầu (Pinned)
-                </label>
+                <div className="flex flex-wrap items-center gap-4">
+                  <label className="inline-flex cursor-pointer items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-200">
+                    <input
+                      type="checkbox"
+                      checked={form.pinned}
+                      onChange={(e) => setForm({ ...form, pinned: e.target.checked })}
+                      className="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    Ghim dự án này lên đầu (Pinned)
+                  </label>
+
+                  <label className="inline-flex cursor-pointer items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-200">
+                    <input
+                      type="checkbox"
+                      checked={form.keepAlive}
+                      onChange={(e) => setForm({ ...form, keepAlive: e.target.checked })}
+                      className="h-4 w-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    Đã bật Monitor giữ ấm (Render luôn Online)
+                  </label>
+                </div>
 
                 <div className="flex items-center gap-2">
                   <button

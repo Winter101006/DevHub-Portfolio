@@ -1,4 +1,14 @@
-import { Award, BookOpen, ExternalLink, Github, Printer, X } from 'lucide-react';
+import {
+  Award,
+  BookOpen,
+  Calendar,
+  ExternalLink,
+  Github,
+  Mail,
+  MapPin,
+  Printer,
+  X,
+} from 'lucide-react';
 import { useEffect } from 'react';
 import { PROFILE_CONFIG } from '../data/profileConfig';
 import type { DevHubProject } from '../types/project';
@@ -34,7 +44,7 @@ export function ResumeModal({ open, onClose, featuredProjects }: ResumeModalProp
           <div className="flex items-center gap-2">
             <BookOpen className="h-4 w-4 text-indigo-500" />
             <span className="text-sm font-bold text-zinc-900 dark:text-white">
-              Curriculum Vitae — Phạm Ngọc Huân
+              Curriculum Vitae — {PROFILE_CONFIG.fullName}
             </span>
           </div>
 
@@ -58,28 +68,51 @@ export function ResumeModal({ open, onClose, featuredProjects }: ResumeModalProp
         </div>
 
         <div className="flex-1 space-y-6 overflow-y-auto p-6 sm:p-8">
-          {/* Header */}
-          <div className="border-b border-zinc-200 pb-5 dark:border-white/10">
-            <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-white">
-              {PROFILE_CONFIG.fullName}
-            </h1>
-            <p className="mt-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
-              {PROFILE_CONFIG.role}
-            </p>
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
-              <span>{PROFILE_CONFIG.university}</span>
-              <span>·</span>
-              <a
-                href={PROFILE_CONFIG.githubUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-indigo-600 hover:underline dark:text-indigo-300"
-              >
-                <Github className="h-3 w-3" />
-                github.com/Winter101006
-              </a>
-              <span>·</span>
-              <span>{PROFILE_CONFIG.location}</span>
+          {/* Header with Portrait */}
+          <div className="flex flex-col gap-5 border-b border-zinc-200 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
+            <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 shadow-sm dark:border-white/15 dark:bg-zinc-800">
+              <img
+                src={PROFILE_CONFIG.avatarUrl}
+                alt={PROFILE_CONFIG.fullName}
+                className="h-full w-full object-cover object-top"
+              />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+                {PROFILE_CONFIG.fullName}
+              </h1>
+              <p className="mt-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+                {PROFILE_CONFIG.role}
+              </p>
+
+              <div className="mt-2.5 grid grid-cols-1 gap-x-4 gap-y-1.5 text-xs text-zinc-600 dark:text-zinc-300 sm:grid-cols-2">
+                <span className="inline-flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5 text-indigo-500" />
+                  {PROFILE_CONFIG.email}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5 text-emerald-500" />
+                  {PROFILE_CONFIG.academicEmail}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                  {PROFILE_CONFIG.location}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5 text-amber-500" />
+                  {PROFILE_CONFIG.birthDate} ·{' '}
+                  <a
+                    href={PROFILE_CONFIG.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 font-medium text-indigo-600 hover:underline dark:text-indigo-300"
+                  >
+                    <Github className="h-3 w-3" />
+                    Winter101006
+                  </a>
+                </span>
+              </div>
             </div>
           </div>
 
@@ -93,10 +126,10 @@ export function ResumeModal({ open, onClose, featuredProjects }: ResumeModalProp
                 Cử nhân Khoa học Máy tính &amp; Thông tin (K69)
               </p>
               <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-300">
-                Trường ĐH Khoa học Tự nhiên - ĐHQGHN (VNU-HUS)
+                {PROFILE_CONFIG.university}
               </p>
               <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                Hoạt động: Thành viên CLB Toán Tin (HAMIC)
+                MSV: {PROFILE_CONFIG.studentId} · Thành viên CLB Toán Tin (HAMIC)
               </p>
             </div>
 
@@ -109,7 +142,7 @@ export function ResumeModal({ open, onClose, featuredProjects }: ResumeModalProp
                 SemEval-2027 Task 3 (NLP)
               </p>
               <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-300">
-                Lexical Semantic Change Detection sử dụng BGE-M3 Embeddings &amp; Graph Label Propagation.
+                Lexical Semantic Change Detection sử dụng BGE-M3 Embeddings &amp; Graph Label Propagation (Task 1a đạt 0.87).
               </p>
             </div>
           </div>

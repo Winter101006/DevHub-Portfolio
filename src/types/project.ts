@@ -61,6 +61,7 @@ export interface ProjectConfigEntry {
   liveUrl?: string;
   githubUrl?: string;
   serverType?: ServerPlatform;
+  keepAlive?: boolean;
   icon?: string;
   accentColor?: string;
   pinned?: boolean;
@@ -86,6 +87,7 @@ export interface DevHubProject {
   liveUrl: string;
   githubUrl: string;
   serverType: ServerPlatform;
+  keepAlive?: boolean;
   icon: string;
   accentColor: string;
   pinned: boolean;

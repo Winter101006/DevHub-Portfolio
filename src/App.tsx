@@ -146,14 +146,17 @@ export function App() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  const handleCopyEmail = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(PROFILE_CONFIG.email);
-      notify('Đã sao chép Email', PROFILE_CONFIG.email, 'success');
-    } catch {
-      notify('Email liên hệ', PROFILE_CONFIG.email, 'info');
-    }
-  }, [notify]);
+  const handleCopyText = useCallback(
+    async (label: string, value: string) => {
+      try {
+        await navigator.clipboard.writeText(value);
+        notify(`Đã sao chép ${label}`, value, 'success');
+      } catch {
+        notify(label, value, 'info');
+      }
+    },
+    [notify]
+  );
 
   const handleRefreshGitHub = useCallback(async () => {
     const result = await syncFromGitHub(true);
@@ -254,7 +257,7 @@ export function App() {
               githubRepoCount={stats.githubRepoCount}
               liveServersCount={stats.liveServersCount}
               uniqueTechCount={stats.uniqueTechCount}
-              onCopyEmail={handleCopyEmail}
+              onCopyText={handleCopyText}
               onOpenResume={() => setResumeOpen(true)}
             />
 

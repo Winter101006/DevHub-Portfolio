@@ -9,6 +9,12 @@ function initialRecordForProject(project: DevHubProject): ServerHealthRecord {
     };
   }
   if (project.serverType === 'render') {
+    if (project.keepAlive) {
+      return {
+        state: 'online',
+        message: 'Online (Render + Monitor · Instant)',
+      };
+    }
     return {
       state: 'cold-start',
       message: 'Cold Start (Render - Click để đánh thức server)',

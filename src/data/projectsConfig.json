@@ -72,18 +72,18 @@
       "repoName": "finance-tracker-backend_new",
       "title": "Personal Finance Tracker",
       "category": "study-life",
-      "tagline": "Ứng dụng Full-stack quản lý tài chính và dòng tiền cá nhân với Java Spring Boot, PostgreSQL Neon và Docker trên Render.",
-      "overview": "Công cụ giúp sinh viên kiểm soát dòng tiền hàng tháng một cách khoa học: ghi chép giao dịch thu/chi tức thì, phân nhóm theo danh mục icon màu sắc, lọc đa điều kiện theo tháng/từ khóa, cảnh báo tỷ lệ chi tiêu vượt ngưỡng và theo dõi biểu đồ dòng tiền 12 tháng.",
+      "tagline": "Ứng dụng Full-stack quản lý tài chính và dòng tiền cá nhân với Java Spring Boot, PostgreSQL Neon và Docker trên Render (giữ ấm qua Monitor).",
+      "overview": "Công cụ giúp kiểm soát dòng tiền cá nhân theo thời gian thực: ghi chép giao dịch thu/chi tức thì, phân nhóm theo danh mục icon màu sắc, lọc đa điều kiện theo tháng/từ khóa, cảnh báo tỷ lệ chi tiêu vượt ngưỡng và theo dõi biểu đồ dòng tiền 12 tháng. Server được cấu hình Monitor tự động nên truy cập trực tiếp không cần chờ khởi động.",
       "technicalHighlights": [
         "Thiết kế chuẩn kiến trúc Backend MVC & RESTful phân tầng (Controller – Service – Repository – JPA Specifications) bằng Java 21 và Spring Boot.",
-        "Lưu trữ bền vững với Spring Data JPA kết nối PostgreSQL đám mây (Neon.tech) và chế độ H2 File Database, áp dụng Bean Validation chặt chẽ cho mọi giao dịch.",
-        "Giao diện trực quan bằng Thymeleaf + Bootstrap 5 + Chart.js 4, đóng gói hoàn chỉnh với Dockerfile và triển khai trên Render kèm bộ test JUnit 5 + MockMvc."
+        "Lưu trữ bền vững với Spring Data JPA kết nối PostgreSQL đám mây (Neon.tech), áp dụng Bean Validation chặt chẽ cho mọi giao dịch và phân loại thu/chi.",
+        "Giao diện trực quan bằng Thymeleaf + Bootstrap 5 + Chart.js 4, đóng gói Dockerfile triển khai trên Render kết hợp Uptime Monitor duy trì trạng thái Online liên tục cùng bộ test JUnit 5 + MockMvc."
       ],
-      "architectureSummary": "Thymeleaf / Web Client ↔ Java 21 Spring Boot (MVC + REST + JPA Criteria) ↔ Cloud PostgreSQL (Neon.tech) · Dockerized on Render",
+      "architectureSummary": "Thymeleaf + Chart.js UI ↔ Java 21 Spring Boot (MVC + JPA Criteria) ↔ Cloud PostgreSQL (Neon.tech) · Docker on Render + Uptime Monitor",
       "metrics": [
         { "label": "Backend", "value": "Java 21 / Spring" },
         { "label": "Database", "value": "Neon PostgreSQL" },
-        { "label": "Container", "value": "Docker" },
+        { "label": "Uptime", "value": "Render + Monitor" },
         { "label": "Testing", "value": "JUnit 5 + MockMvc" }
       ],
       "techStack": [
@@ -92,11 +92,12 @@
         "Thymeleaf",
         "PostgreSQL (Neon)",
         "Docker",
-        "Render"
+        "Render + Monitor"
       ],
-      "liveUrl": "https://finance-tracker-backend-6j4f.onrender.com",
+      "liveUrl": "https://finance-tracker-huanpham.onrender.com/transactions",
       "githubUrl": "https://github.com/Winter101006/finance-tracker-backend_new",
       "serverType": "render",
+      "keepAlive": true,
       "icon": "wallet",
       "accentColor": "emerald",
       "pinned": true
