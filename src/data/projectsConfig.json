@@ -1,0 +1,245 @@
+{
+  "pinnedProjects": [
+    {
+      "id": "Game_Micute",
+      "repoName": "Game_Micute",
+      "title": "KawaiiCraft — Lục Địa 4 Mùa (V2.0 → V5.3)",
+      "category": "game-creative",
+      "tagline": "Web game Voxel 3D đa địa hình 4 mùa hỗ trợ Co-op 2 người thời gian thực, tối ưu 60 FPS cho cả máy cấu hình yếu.",
+      "overview": "Thế giới sandbox 3D nhẹ nhàng chạy trực tiếp trên trình duyệt không cần cài đặt. Hai người chơi có thể vào chung phòng chỉ với 1 chạm, cùng nhau khám phá Lục địa 4 mùa (Xuân – Hạ – Thu – Đông) và 3 bản đồ 320×320, tham gia trốn tìm, giải mê cung trái tim, ngồi xích đu đôi hay ngắm toàn cảnh trên Vòng Quay Mặt Trời.",
+      "technicalHighlights": [
+        "Tối ưu đồ họa cho máy cấu hình yếu bằng HTML5 Canvas procedural textures (vẽ 36 chất liệu khối trong RAM), kết hợp Three.js InstancedMesh và thuật toán culling isBlockExposed() giữ mượt 60 FPS.",
+        "Đồng bộ Co-op 2 người chơi thời gian thực qua Firebase Realtime Database (tần số 15Hz kết hợp nội suy Lerp 60 FPS) và dọn phòng tự động bằng onDisconnect().",
+        "Tích hợp 11 mini-games cặp đôi (Trốn tìm/Đuổi bắt 60s, Mê cung trái tim, Xích đu đôi, Vòng quay mặt trời Y=56, Đấu trường 100 HP), lưu trữ vi sai Delta Compression và hộp nhạc Lo-Fi Web Audio API."
+      ],
+      "architectureSummary": "Browser Single-File Engine (Three.js r128 + HTML5 Canvas) ↔ Firebase Realtime Database (Co-op Rooms & Minigame Sync) ↔ Vercel Edge Static Hosting",
+      "metrics": [
+        { "label": "Frame Rate", "value": "60 FPS" },
+        { "label": "World Size", "value": "3 × 320×320" },
+        { "label": "Minigames", "value": "11 chế độ" },
+        { "label": "Multiplayer", "value": "Firebase RTDB" }
+      ],
+      "techStack": [
+        "HTML5 Canvas",
+        "Three.js",
+        "Firebase RTDB",
+        "Web Audio API",
+        "Vercel"
+      ],
+      "liveUrl": "https://game-micute.vercel.app",
+      "githubUrl": "https://github.com/Winter101006/Game_Micute",
+      "serverType": "vercel",
+      "icon": "gamepad",
+      "accentColor": "pink",
+      "pinned": true
+    },
+    {
+      "id": "GPA-Huan",
+      "repoName": "GPA-Huan",
+      "title": "VNU-HUS GPA & Curriculum Roadmap",
+      "category": "study-life",
+      "tagline": "Hệ thống theo dõi điểm số GPA/CPA và trực quan hóa cây môn học tiên quyết chuẩn QĐ 3568 cho sinh viên KHMT VNU-HUS.",
+      "overview": "Trợ lý học tập toàn diện cho sinh viên ngành Khoa học Máy tính & Thông tin (ĐH KHTN - ĐHQGHN). Hỗ trợ đánh dấu các môn đã tích lũy, mô phỏng điểm số để đạt mục tiêu bằng Giỏi/Xuất sắc, kiểm tra các môn điểm D/D+ được phép học cải thiện, định hướng chuyên ngành và hỏi đáp lộ trình với cố vấn AI.",
+      "technicalHighlights": [
+        "Trực quan hóa 61 học phần (129 tín chỉ tính GPA) bằng đồ thị tương tác @xyflow/react với 2 chế độ: Cây tiên quyết bắt buộc (QĐ 3568) và Knowledge Graph liên kết tri thức.",
+        "Bộ máy tính toán CPA Hệ 4 & Hệ 10 chuẩn quy chế ĐHQGHN, mô phỏng kịch bản điểm từng học kỳ và đo lường độ tương thích cho 6 lộ trình nghề nghiệp (AI/ML, Data Science, Full-Stack...).",
+        "Tích hợp Backend FastAPI + Cố vấn AI sử dụng Hybrid RAG (Gemini Embeddings 3072 chiều + BM25 Lexical Matching) trên 67 chunks tri thức đề cương môn học và không gian NCKH NLP."
+      ],
+      "architectureSummary": "React 19 + TypeScript + @xyflow/react + Recharts (Vercel) ↔ Python FastAPI + Hybrid RAG (Gemini 3072-dim Embeddings + BM25)",
+      "metrics": [
+        { "label": "Chương trình", "value": "61 môn / 129 TC" },
+        { "label": "RAG Vectors", "value": "3072-dim" },
+        { "label": "Knowledge Base", "value": "67 chunks" },
+        { "label": "Career Tracks", "value": "6 lộ trình" }
+      ],
+      "techStack": [
+        "React 19",
+        "TypeScript",
+        "@xyflow/react",
+        "Tailwind CSS",
+        "FastAPI",
+        "Gemini RAG"
+      ],
+      "liveUrl": "https://gpa-huan.vercel.app",
+      "githubUrl": "https://github.com/Winter101006/GPA-Huan",
+      "serverType": "vercel",
+      "icon": "graduation",
+      "accentColor": "indigo",
+      "pinned": true
+    },
+    {
+      "id": "finance-tracker-backend_new",
+      "repoName": "finance-tracker-backend_new",
+      "title": "Personal Finance Tracker",
+      "category": "study-life",
+      "tagline": "Ứng dụng Full-stack quản lý tài chính và dòng tiền cá nhân với Java Spring Boot, PostgreSQL Neon và Docker trên Render.",
+      "overview": "Công cụ giúp sinh viên kiểm soát dòng tiền hàng tháng một cách khoa học: ghi chép giao dịch thu/chi tức thì, phân nhóm theo danh mục icon màu sắc, lọc đa điều kiện theo tháng/từ khóa, cảnh báo tỷ lệ chi tiêu vượt ngưỡng và theo dõi biểu đồ dòng tiền 12 tháng.",
+      "technicalHighlights": [
+        "Thiết kế chuẩn kiến trúc Backend MVC & RESTful phân tầng (Controller – Service – Repository – JPA Specifications) bằng Java 21 và Spring Boot.",
+        "Lưu trữ bền vững với Spring Data JPA kết nối PostgreSQL đám mây (Neon.tech) và chế độ H2 File Database, áp dụng Bean Validation chặt chẽ cho mọi giao dịch.",
+        "Giao diện trực quan bằng Thymeleaf + Bootstrap 5 + Chart.js 4, đóng gói hoàn chỉnh với Dockerfile và triển khai trên Render kèm bộ test JUnit 5 + MockMvc."
+      ],
+      "architectureSummary": "Thymeleaf / Web Client ↔ Java 21 Spring Boot (MVC + REST + JPA Criteria) ↔ Cloud PostgreSQL (Neon.tech) · Dockerized on Render",
+      "metrics": [
+        { "label": "Backend", "value": "Java 21 / Spring" },
+        { "label": "Database", "value": "Neon PostgreSQL" },
+        { "label": "Container", "value": "Docker" },
+        { "label": "Testing", "value": "JUnit 5 + MockMvc" }
+      ],
+      "techStack": [
+        "Java 21",
+        "Spring Boot",
+        "Thymeleaf",
+        "PostgreSQL (Neon)",
+        "Docker",
+        "Render"
+      ],
+      "liveUrl": "https://finance-tracker-backend-6j4f.onrender.com",
+      "githubUrl": "https://github.com/Winter101006/finance-tracker-backend_new",
+      "serverType": "render",
+      "icon": "wallet",
+      "accentColor": "emerald",
+      "pinned": true
+    },
+    {
+      "id": "student-productivity-ml",
+      "repoName": "student-productivity-ml",
+      "title": "Student Productivity & Spending ML Pipelines",
+      "category": "ai-ds",
+      "tagline": "Hệ thống Học máy phân tích hành vi tiêu dùng (1.000 mẫu) và mức độ xao nhãng kỹ thuật số (tới 20.000 mẫu) kèm Streamlit Dashboard.",
+      "overview": "Nghiên cứu Khoa học Dữ liệu trả lời hai câu hỏi thực tiễn của sinh viên: thói quen sử dụng điện thoại/mạng xã hội ảnh hưởng ra sao đến giấc ngủ & điểm GPA, và hành vi chi tiêu sinh viên phân hóa theo những nhóm nào. Kết quả được trực quan hóa thành bảng điều khiển Streamlit cho phép dự đoán trực tiếp.",
+      "technicalHighlights": [
+        "Pipeline tiền xử lý chuẩn không rò rỉ dữ liệu: xử lý giá trị thiếu (Median/Mode), cắt ngoại lai IQR, Ordinal/One-Hot Encoding (20 → 35 chiều) và chuẩn hóa Z-Score cho tập dữ liệu hành vi số & chi tiêu sinh viên.",
+        "Giảm chiều dữ liệu & phân cụm đa thuật toán: so sánh PCA (90% phương sai tại 23 chiều) vs TruncatedSVD; đối chiếu K-Means Clustering, GMM (EM BIC/AIC) và DBSCAN trên Silhouette, ARI, NMI.",
+        "Huấn luyện & so sánh ma trận 7 bộ phân loại (LogReg, Linear/RBF SVM, Decision Tree, MLP, KNN, Naive Bayes) kết hợp Regularization chống Overfitting (AUC > 0.93) và biến đổi hồi quy từ Decision Function (Ridge R² = 1.0000 trên 35D)."
+      ],
+      "architectureSummary": "Raw Behavioral & Spending Datasets → Zero-Leakage Preprocessing → PCA/SVD + K-Means/LDA → 7-Model Benchmark & Ridge Regression → Streamlit Interactive App",
+      "metrics": [
+        { "label": "Dataset Scale", "value": "1K – 20K mẫu" },
+        { "label": "Models", "value": "7 Classifiers" },
+        { "label": "ROC-AUC", "value": "> 0.93" },
+        { "label": "UI", "value": "Streamlit" }
+      ],
+      "techStack": [
+        "Python",
+        "scikit-learn",
+        "K-Means & PCA",
+        "LDA / SVM / MLP",
+        "Streamlit",
+        "Pandas"
+      ],
+      "liveUrl": "",
+      "githubUrl": "https://github.com/Winter101006/student-productivity-ml",
+      "serverType": "streamlit",
+      "icon": "brain",
+      "accentColor": "violet",
+      "pinned": true
+    },
+    {
+      "id": "SemEval-2027-Task3",
+      "repoName": "SemEval-2027-Task3",
+      "title": "SemEval-2027 Task 3: Lexical Semantic Change",
+      "category": "ai-ds",
+      "tagline": "Nghiên cứu phát hiện sự biến đổi ngữ nghĩa từ vựng tiếng Thụy Điển bằng BGE-M3 Embeddings và Graph Label Propagation.",
+      "overview": "Đề tài Nghiên cứu Khoa học (NCKH) chuyên sâu tại VNU-HUS giải quyết bài toán ngôn ngữ học tính toán: tự động phát hiện một từ vựng tiếng Thụy Điển đã dịch chuyển nghĩa hoặc hình thành nghĩa mới như thế nào giữa các giai đoạn lịch sử khác nhau.",
+      "technicalHighlights": [
+        "Sử dụng mô hình ngôn ngữ đa ngữ mật độ cao BGE-M3 để biểu diễn ngữ nghĩa theo từng ngữ cảnh xuất hiện (contextual token/sentence embeddings) của từ mục tiêu.",
+        "Xây dựng đồ thị tương đồng ngữ nghĩa liên thời kỳ và áp dụng thuật toán Graph Label Propagation để phân cụm, đo lường mức độ biến đổi nghĩa (đạt mốc 0.87 ở thử nghiệm Task 1a).",
+        "Thiết kế quy trình kiểm định chéo nghiêm ngặt Leave-One-Lemma-Out (LOLO) nhằm đánh giá chính xác khả năng tổng quát hóa sang các từ chưa từng thấy."
+      ],
+      "architectureSummary": "Diachronic Swedish Corpora → BGE-M3 Contextual Embeddings → Similarity Graph Construction → Graph Label Propagation → Leave-One-Lemma-Out CV",
+      "metrics": [
+        { "label": "Task 1a Score", "value": "0.87" },
+        { "label": "Embeddings", "value": "BGE-M3" },
+        { "label": "Algorithm", "value": "Label Propagation" },
+        { "label": "Validation", "value": "Leave-One-Lemma-Out" }
+      ],
+      "techStack": [
+        "PyTorch",
+        "BGE-M3",
+        "Graph Label Propagation",
+        "Leave-One-Lemma-Out",
+        "NLP Research"
+      ],
+      "liveUrl": "",
+      "githubUrl": "https://github.com/Winter101006/SemEval-2027-Task3",
+      "serverType": "none",
+      "icon": "flask",
+      "accentColor": "amber",
+      "pinned": true
+    }
+  ],
+  "hiddenRepoNames": [
+    "DevHub-Portfolio",
+    "HappyBirthday-Uyen",
+    "20-10-Uyen",
+    "Love"
+  ],
+  "customProjects": [
+    {
+      "id": "custom-hanoi-explorer",
+      "title": "Hanoi Explorer Chatbot (RAG AI)",
+      "category": "ai-ds",
+      "tagline": "Trợ lý ảo RAG AI gợi ý hơn 1.360 địa điểm vui chơi, ẩm thực và danh lam thắng cảnh tại Hà Nội theo ngữ cảnh tự nhiên.",
+      "overview": "Thay vì phải tìm kiếm rời rạc trên nhiều bài review, người dùng chỉ cần nhập mong muốn tự nhiên như 'cuối tuần đi đâu chill gần Hồ Tây dưới 200k' — Chatbot sẽ hiểu ngữ nghĩa tiếng Việt và đề xuất các địa điểm phù hợp nhất kèm mô tả và gợi ý lịch trình.",
+      "technicalHighlights": [
+        "Kiến trúc Retrieval-Augmented Generation (RAG) sử dụng ChromaDB lưu trữ và truy xuất vector ngữ nghĩa cho hơn 1.360 địa điểm tại Hà Nội.",
+        "Embedding văn bản bằng mô hình đa ngữ paraphrase-multilingual-MiniLM-L12-v2, xử lý mượt cả truy vấn tiếng Việt có dấu, không dấu và tên địa danh tiếng Anh.",
+        "Kết hợp Metadata Filtering (quận, mức giá, khung giờ mở cửa) trước khi đưa ngữ cảnh vào LLM sinh câu trả lời, hạn chế tối đa ảo giác (hallucination)."
+      ],
+      "architectureSummary": "User Query → MiniLM-L12-v2 Encoder → ChromaDB Vector Store (1,360+ Places) + Metadata Filter → LLM Response Synthesis → Web Chat UI",
+      "metrics": [
+        { "label": "Vector DB", "value": "ChromaDB" },
+        { "label": "Địa điểm", "value": "1.360+" },
+        { "label": "Embedder", "value": "MiniLM-L12-v2" },
+        { "label": "Kiến trúc", "value": "RAG Pipeline" }
+      ],
+      "techStack": [
+        "Python",
+        "ChromaDB",
+        "Sentence-Transformers",
+        "MiniLM-L12-v2",
+        "RAG",
+        "Web UI"
+      ],
+      "liveUrl": "",
+      "githubUrl": "https://github.com/Winter101006",
+      "serverType": "none",
+      "icon": "map",
+      "accentColor": "cyan",
+      "pinned": true
+    },
+    {
+      "id": "custom-nutrition-ai",
+      "title": "Student Nutrition & Calorie AI Tracker",
+      "category": "study-life",
+      "tagline": "Web theo dõi dinh dưỡng tự động tính BMI, BMR, TDEE, Macro và phân tích calo món ăn Việt Nam bằng LLM.",
+      "overview": "Trợ lý sức khỏe thiết kế cho sinh viên bận rộn: chỉ cần nhập chiều cao, cân nặng và ghi lại bữa ăn hằng ngày (phở bò, cơm tấm, bún chả, trà sữa...), hệ thống tự động tính nhu cầu năng lượng, theo dõi tỷ lệ Đạm–Tinh bột–Chất béo và gợi ý cân bằng dinh dưỡng.",
+      "technicalHighlights": [
+        "Tích hợp công thức sinh trắc học chuẩn (BMI, BMR Mifflin-St Jeor, TDEE theo cường độ vận động) và tự động phân bổ Macro ratios theo mục tiêu cá nhân.",
+        "Xây dựng cơ sở dữ liệu dinh dưỡng chuẩn hóa cho món ăn Việt Nam theo khẩu phần thực tế (bát, đĩa, suất, ly).",
+        "Kết hợp LLM để phân tích nhật ký bữa ăn viết bằng tiếng Việt tự nhiên thành dữ liệu calo và vi chất có cấu trúc."
+      ],
+      "architectureSummary": "Web Tracker UI → Biometric Engine (BMI/BMR/TDEE) + Vietnamese Food DB → LLM Natural Meal Analyzer → Daily Macro Analytics",
+      "metrics": [
+        { "label": "Chỉ số", "value": "BMI/BMR/TDEE" },
+        { "label": "Food DB", "value": "Món ăn Việt" },
+        { "label": "AI Parser", "value": "LLM Calorie" },
+        { "label": "Tracking", "value": "Macro Ratios" }
+      ],
+      "techStack": [
+        "Python",
+        "React",
+        "LLM Integration",
+        "Vietnamese Food DB",
+        "Macro Calculator"
+      ],
+      "liveUrl": "",
+      "githubUrl": "https://github.com/Winter101006",
+      "serverType": "none",
+      "icon": "heart",
+      "accentColor": "rose",
+      "pinned": true
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(161, 161, 170, 0.25);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(161, 161, 170, 0.45);
+  }
+}
+
+.linear-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(120, 120, 140, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(120, 120, 140, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.dark .linear-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bento-card {
+  @apply relative rounded-2xl border border-zinc-200/80 bg-white/85 backdrop-blur-md transition-all duration-200 dark:border-white/[0.08] dark:bg-obsidian-900/80;
+}
+
+.bento-card-hover {
+  @apply bento-card hover:border-zinc-300 hover:shadow-glow-light dark:hover:border-white/[0.16] dark:hover:shadow-glow;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
