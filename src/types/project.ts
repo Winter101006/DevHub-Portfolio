@@ -1,6 +1,8 @@
+export type Language = 'vi' | 'en';
+
 export type CategoryId = 'ai-ds' | 'study-life' | 'game-creative' | 'others';
 
-export type FilterTab = 'all' | CategoryId | 'pinned';
+export type FilterTab = 'all' | CategoryId;
 
 export type ViewMode = 'portfolio' | 'launcher';
 
@@ -52,6 +54,8 @@ export interface ProjectConfigEntry {
   repoName?: string;
   title: string;
   category: CategoryId;
+  year?: string;
+  order?: number;
   tagline: string;
   overview: string;
   technicalHighlights: string[];
@@ -78,6 +82,8 @@ export interface DevHubProject {
   repoName?: string;
   title: string;
   category: CategoryId;
+  year: string;
+  order: number;
   tagline: string;
   overview: string;
   technicalHighlights: string[];

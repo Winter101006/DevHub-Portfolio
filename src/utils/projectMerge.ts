@@ -19,59 +19,6 @@ interface RepoPresetCopy {
 }
 
 const KNOWN_GITHUB_SUMMARIES: Record<string, RepoPresetCopy> = {
-  Game_Time: {
-    title: 'Game Time — Bấm Đúng Thời Điểm',
-    tagline: 'Mini-game kiểm tra phản xạ tốc độ và cảm nhận thời gian chính xác đến từng mili-giây trên trình duyệt.',
-    overview:
-      'Trò chơi giải trí nhẹ nhàng thử thách khả năng căn thời gian chính xác của người chơi chỉ với một cú chạm hoặc phím bấm. Phù hợp để giải trí nhanh trong giờ nghỉ giữa tiết học.',
-    technicalHighlights: [
-      'Xây dựng hoàn toàn bằng HTML5/CSS3/Vanilla JavaScript thuần, không phụ thuộc thư viện ngoài, thời gian tải trang gần như tức thì.',
-      'Tính toán độ lệch thời gian bằng bộ đếm hiệu năng cao và cập nhật trạng thái phản hồi mượt mà trên DOM.',
-    ],
-    techStack: ['HTML5', 'CSS3', 'Vanilla JS'],
-    icon: 'timer',
-    accentColor: 'amber',
-  },
-  Game_Num: {
-    title: 'Game Num — Thử Thách Đoán Số',
-    tagline: 'Mini-game suy luận logic tìm số bí mật tối giản, rèn luyện tư duy tìm kiếm nhị phân.',
-    overview:
-      'Người chơi đoán con số bí mật trong khoảng giới hạn dựa trên gợi ý lớn hơn hoặc nhỏ hơn sau mỗi lượt thử, tối ưu số lần đoán ít nhất theo chiến lược chia đôi khoảng.',
-    technicalHighlights: [
-      'Thuật toán sinh số ngẫu nhiên an toàn phạm vi, kiểm soát vòng lặp trạng thái game và phản hồi trực quan cho từng bước đoán.',
-      'Giao diện đơn giản gọn nhẹ chạy trực tiếp mọi thiết bị mà không cần backend.',
-    ],
-    techStack: ['HTML5', 'CSS3', 'JavaScript'],
-    icon: 'hash',
-    accentColor: 'sky',
-  },
-  'finance-tracker-backend': {
-    title: 'Finance Tracker REST API v1 (Render)',
-    tagline: 'Phiên bản RESTful API đầu tiên bằng Java Spring Boot kết nối PostgreSQL đám mây và Docker trên Render.',
-    overview:
-      'Dịch vụ backend chuyên trách quản lý giao dịch thu/chi và thống kê tỷ lệ chi tiêu qua API JSON, tách biệt hoàn toàn với tầng giao diện client.',
-    technicalHighlights: [
-      'Spring Boot Web + Spring Data JPA kết nối PostgreSQL, đóng gói bằng Dockerfile và triển khai trực tiếp trên Render Web Service.',
-      'Cung cấp các endpoint /api/finance/transactions và /api/finance/analytics phục vụ tính tổng thu/chi và cảnh báo tài chính.',
-    ],
-    techStack: ['Java', 'Spring Boot', 'PostgreSQL', 'Docker', 'Render'],
-    liveUrl: 'https://finance-tracker-backend-6j4f.onrender.com',
-    icon: 'server',
-    accentColor: 'teal',
-  },
-  'finance-tracker-frontend': {
-    title: 'Finance Tracker Fetch Client (SPA)',
-    tagline: 'Giao diện Web Client siêu nhẹ kết nối trực tiếp tới Spring Boot REST API qua Fetch API.',
-    overview:
-      'Trang web đơn trang thuần HTML/JS cho phép nhập giao dịch tiền tệ VND có định dạng tự động dấu phân cách và đồng bộ tức thì với backend Render.',
-    technicalHighlights: [
-      'Sử dụng Fetch API bất đồng bộ (async/await) giao tiếp RESTful CRUD (GET/POST/DELETE) với server Java trên Render.',
-      'Xử lý chuẩn hóa chuỗi số tiền tiếng Việt (vi-VN) theo thời gian thực khi người dùng focus/blur ô nhập liệu.',
-    ],
-    techStack: ['HTML5', 'CSS3', 'Fetch API', 'REST Client'],
-    icon: 'globe',
-    accentColor: 'cyan',
-  },
   'HappyBirthday-Uyen': {
     title: 'Happy Birthday Interactive Web',
     tagline: 'Thiệp sinh nhật tương tác trên nền web kết hợp hiệu ứng hoạt ảnh và album kỷ niệm.',
@@ -130,6 +77,12 @@ function defaultAccentForCategory(category: DevHubProject['category']): string {
   }
 }
 
+function extractYear(isoDate?: string, fallback = '2026'): string {
+  if (!isoDate) return fallback;
+  const year = new Date(isoDate).getFullYear();
+  return Number.isNaN(year) ? fallback : String(year);
+}
+
 export function mergeProjectsData(
   githubRepos: GitHubRepoRaw[],
   config: ProjectsConfigFile
@@ -159,6 +112,8 @@ export function mergeProjectsData(
         repoName: repo.name,
         title: override.title,
         category: override.category,
+        year: override.year || extractYear(repo.pushed_at || repo.updated_at),
+        order: override.order ?? 50,
         tagline: override.tagline,
         overview: override.overview,
         technicalHighlights: override.technicalHighlights,
@@ -193,7 +148,7 @@ export function mergeProjectsData(
           new Set(
             [repo.language, ...(repo.topics || [])]
               .filter((x): x is string => Boolean(x && x.trim()))
-              .slice(0, 6)
+              .slice(0, 5)
           )
         );
 
@@ -202,6 +157,8 @@ export function mergeProjectsData(
         repoName: repo.name,
         title: preset?.title || repo.name,
         category,
+        year: extractYear(repo.pushed_at || repo.updated_at),
+        order: 100,
         tagline:
           preset?.tagline ||
           repo.description ||
@@ -209,15 +166,16 @@ export function mergeProjectsData(
         overview:
           preset?.overview ||
           repo.description ||
-          `Dự án lưu trữ trên GitHub (${repo.full_name}), được tự động đồng bộ và phân loại vào nhóm ${category}.`,
+          `Dự án lưu trữ trên GitHub (${repo.full_name}), được tự động đồng bộ và phân loại.`,
         technicalHighlights: preset?.technicalHighlights || [
-          `Ngôn ngữ chính: ${repo.language || 'Đang cập nhật'}, nhánh mặc định: ${repo.default_branch}.`,
+          `Ngôn ngữ chính: ${repo.language || 'Web'}, nhánh mặc định: ${repo.default_branch}.`,
           'Tự động đồng bộ metadata từ GitHub REST API.',
         ],
         techStack: techStack.length > 0 ? techStack : ['GitHub', 'Source Code'],
         liveUrl,
         githubUrl: repo.html_url,
         serverType: detectServerPlatform(liveUrl),
+        keepAlive: false,
         icon: preset?.icon || defaultIconForCategory(category),
         accentColor: preset?.accentColor || defaultAccentForCategory(category),
         pinned: false,
@@ -231,7 +189,7 @@ export function mergeProjectsData(
     }
   }
 
-  // Include any pinnedProjects that don't correspond to a GitHub repo (standalone pinned items)
+  // Include any pinnedProjects that don't correspond to a fetched GitHub repo
   for (const entry of config.pinnedProjects) {
     const key = (entry.repoName || entry.id).toLowerCase();
     if (consumedConfigIds.has(key)) continue;
@@ -241,6 +199,8 @@ export function mergeProjectsData(
       repoName: entry.repoName,
       title: entry.title,
       category: entry.category,
+      year: entry.year || '2026',
+      order: entry.order ?? 50,
       tagline: entry.tagline,
       overview: entry.overview,
       technicalHighlights: entry.technicalHighlights,
@@ -269,6 +229,8 @@ export function mergeProjectsData(
       id: entry.id,
       title: entry.title,
       category: entry.category,
+      year: entry.year || '2026',
+      order: entry.order ?? 60,
       tagline: entry.tagline,
       overview: entry.overview,
       technicalHighlights: entry.technicalHighlights,
@@ -289,12 +251,10 @@ export function mergeProjectsData(
     });
   }
 
-  // Sort: Pinned first, then live-deployed apps, then most recently updated
+  // Sort by pinned first, then explicit curated order, then most recently updated
   return resolved.sort((a, b) => {
     if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-    const aLive = a.liveUrl ? 1 : 0;
-    const bLive = b.liveUrl ? 1 : 0;
-    if (aLive !== bLive) return bLive - aLive;
+    if (a.order !== b.order) return a.order - b.order;
     const aTime = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
     const bTime = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
     return bTime - aTime;

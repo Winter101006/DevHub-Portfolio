@@ -11,8 +11,8 @@ import {
   Zap,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CATEGORY_MAP } from '../data/projectsConfig';
-import type { DevHubProject, ViewMode } from '../types/project';
+import { getCategoryLabel, localizeProject } from '../data/i18n';
+import type { DevHubProject, Language, ViewMode } from '../types/project';
 import { matchesSearchQuery } from '../utils/text';
 import { ProjectIcon } from './ProjectIcon';
 
@@ -20,6 +20,7 @@ interface CommandPaletteProps {
   open: boolean;
   onClose: () => void;
   projects: DevHubProject[];
+  lang: Language;
   viewMode: ViewMode;
   theme: 'dark' | 'light';
   onOpenDetail: (project: DevHubProject) => void;
@@ -44,6 +45,7 @@ export function CommandPalette({
   open,
   onClose,
   projects,
+  lang,
   viewMode,
   theme,
   onOpenDetail,
@@ -65,7 +67,10 @@ export function CommandPalette({
   }, [open]);
 
   const items: PaletteItem[] = useMemo(() => {
-    const visible = projects.filter((p) => !p.hidden);
+    const visible = projects
+      .filter((p) => !p.hidden)
+      .map((p) => localizeProject(p, lang));
+
     const matchedProjects = visible
       .filter((p) =>
         matchesSearchQuery(query, [
@@ -74,10 +79,9 @@ export function CommandPalette({
           p.tagline,
           p.overview,
           p.category,
-          // Bilingual / alias keywords for ultra-fast Vietnamese launcher search
-          p.id.includes('finance') ? 'tien tai chinh chi tieu ngan sach' : '',
-          p.id.includes('GPA') ? 'diem mon hoc hus roadmap' : '',
-          p.id.includes('Game') ? 'game choi 3d minecraft' : '',
+          p.id.includes('finance') ? 'tien tai chinh chi tieu ngan sach finance' : '',
+          p.id.includes('GPA') ? 'diem mon hoc hus roadmap gpa' : '',
+          p.id.includes('Game') ? 'game choi 3d minecraft kawaiicraft' : '',
           ...p.techStack,
         ])
       )
@@ -88,10 +92,17 @@ export function CommandPalette({
         kind: 'action',
         id: 'act-mode',
         title:
-          viewMode === 'portfolio'
-            ? 'Chuyển sang Launcher Mode (Tốc độ cao)'
-            : 'Chuyển sang Portfolio Mode (Đầy đủ)',
-        subtitle: 'Thay đổi bố cục giao diện trang chính',
+          lang === 'vi'
+            ? viewMode === 'portfolio'
+              ? 'Chuyển sang chế độ Dev Launcher'
+              : 'Chuyển sang chế độ Portfolio'
+            : viewMode === 'portfolio'
+              ? 'Switch to Dev Launcher Mode'
+              : 'Switch to Portfolio Mode',
+        subtitle:
+          lang === 'vi'
+            ? 'Thay đổi chế độ hiển thị chính'
+            : 'Toggle between Portfolio and Operations Console',
         run: () => {
           onToggleViewMode();
           onClose();
@@ -100,8 +111,14 @@ export function CommandPalette({
       {
         kind: 'action',
         id: 'act-wake',
-        title: 'Wake Up All Servers (Vercel & Render)',
-        subtitle: 'Gửi tín hiệu đánh thức các server backend đang sleep',
+        title:
+          lang === 'vi'
+            ? 'Ping & Đánh thức tất cả Servers'
+            : 'Ping & Wake All Servers',
+        subtitle:
+          lang === 'vi'
+            ? 'Kiểm tra kết nối các endpoint Vercel & Render'
+            : 'Check health and wake up Vercel & Render endpoints',
         run: () => {
           onWakeAllServers();
           onClose();
@@ -110,8 +127,14 @@ export function CommandPalette({
       {
         kind: 'action',
         id: 'act-admin',
-        title: 'Mở Trình Quản Lý Dự Án (Manage Hub)',
-        subtitle: 'Ẩn/Hiện repo, Ghim dự án, Thêm mới & Xuất JSON Config',
+        title:
+          lang === 'vi'
+            ? 'Mở Quản Trị Dự Án (Manage Hub)'
+            : 'Open Project Manager (Manage Hub)',
+        subtitle:
+          lang === 'vi'
+            ? 'Ẩn/Hiện repo, Ghim dự án, Thêm mới & Xuất JSON Config'
+            : 'Show/hide repos, pin projects, add custom entries & export JSON',
         shortcut: 'Ctrl+Shift+E',
         run: () => {
           onClose();
@@ -122,10 +145,15 @@ export function CommandPalette({
         kind: 'action',
         id: 'act-theme',
         title:
-          theme === 'dark'
-            ? 'Chuyển sang Light Mode'
-            : 'Chuyển sang Dark Mode (Obsidian)',
-        subtitle: 'Đổi giao diện Sáng / Tối',
+          lang === 'vi'
+            ? theme === 'dark'
+              ? 'Chuyển sang Giao diện Sáng (Light Mode)'
+              : 'Chuyển sang Giao diện Tối (Dark Mode)'
+            : theme === 'dark'
+              ? 'Switch to Light Mode'
+              : 'Switch to Dark Mode',
+        subtitle:
+          lang === 'vi' ? 'Đổi màu nền giao diện' : 'Toggle color appearance',
         run: () => {
           onToggleTheme();
           onClose();
@@ -141,6 +169,7 @@ export function CommandPalette({
     return [...matchedProjects, ...quickActions];
   }, [
     projects,
+    lang,
     query,
     viewMode,
     theme,
@@ -203,18 +232,22 @@ export function CommandPalette({
       onClick={onClose}
     >
       <div
-        className="animate-scale-in w-full max-w-2xl overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl dark:border-white/15 dark:bg-obsidian-900"
+        className="animate-scale-in w-full max-w-2xl overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl dark:border-white/15 dark:bg-[#09090B]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input */}
         <div className="flex items-center gap-3 border-b border-zinc-200/80 px-4 py-3.5 dark:border-white/[0.08]">
-          <Search className="h-4 w-4 shrink-0 text-indigo-500" />
+          <Search className="h-4 w-4 shrink-0 text-zinc-400" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder='Gõ tên dự án (vd: "gpa", "game", "tiền", "hanoi") hoặc lệnh...'
+            placeholder={
+              lang === 'vi'
+                ? 'Tìm nhanh dự án (vd: "semeval", "gpa", "finance", "game") hoặc lệnh...'
+                : 'Search projects ("semeval", "gpa", "finance", "game") or commands...'
+            }
             className="w-full bg-transparent text-sm text-zinc-900 placeholder-zinc-400 outline-none dark:text-white dark:placeholder-zinc-500"
           />
           <kbd className="rounded-md border border-zinc-200 bg-zinc-100 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500 dark:border-white/10 dark:bg-white/[0.06] dark:text-zinc-400">
@@ -226,7 +259,9 @@ export function CommandPalette({
         <div className="max-h-[60vh] overflow-y-auto p-2">
           {items.length === 0 ? (
             <div className="py-10 text-center text-xs text-zinc-500 dark:text-zinc-400">
-              Không có kết quả nào khớp với &ldquo;{query}&rdquo;
+              {lang === 'vi'
+                ? `Không có kết quả nào khớp với "${query}"`
+                : `No matching results for "${query}"`}
             </div>
           ) : (
             <div className="space-y-1">
@@ -235,15 +270,14 @@ export function CommandPalette({
 
                 if (item.kind === 'project') {
                   const p = item.project;
-                  const cat = CATEGORY_MAP[p.category];
                   return (
                     <div
                       key={p.id}
                       onMouseEnter={() => setSelectedIndex(index)}
                       className={`flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 transition ${
                         isSelected
-                          ? 'bg-indigo-500/10 dark:bg-indigo-500/15'
-                          : 'hover:bg-zinc-100/80 dark:hover:bg-white/[0.04]'
+                          ? 'bg-zinc-100 dark:bg-white/[0.07]'
+                          : 'hover:bg-zinc-100/70 dark:hover:bg-white/[0.04]'
                       }`}
                     >
                       <button
@@ -270,7 +304,7 @@ export function CommandPalette({
                               {p.title}
                             </span>
                             <span className="hidden rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500 dark:bg-white/[0.06] dark:text-zinc-400 sm:inline">
-                              {cat.shortLabel}
+                              {getCategoryLabel(p.category, lang)}
                             </span>
                           </div>
                           <p className="truncate text-[11px] text-zinc-500 dark:text-zinc-400">
@@ -287,7 +321,6 @@ export function CommandPalette({
                             onOpenDetail(p);
                           }}
                           className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-[10px] font-medium text-zinc-600 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300"
-                          title="Xem chi tiết (Shift + Enter)"
                         >
                           <BookOpen className="h-3 w-3" />
                         </button>
@@ -299,12 +332,12 @@ export function CommandPalette({
                             onClick={onClose}
                             className="inline-flex items-center gap-1 rounded-lg bg-zinc-900 px-2.5 py-1 text-[10px] font-semibold text-white dark:bg-white dark:text-zinc-950"
                           >
-                            Mở Web
+                            <span>{lang === 'vi' ? 'Mở Live' : 'Open'}</span>
                             <ArrowUpRight className="h-3 w-3" />
                           </a>
                         ) : (
                           <span className="rounded-lg border border-zinc-200 px-2 py-1 font-mono text-[10px] text-zinc-400 dark:border-white/10">
-                            Chi tiết
+                            {lang === 'vi' ? 'Chi tiết' : 'Details'}
                           </span>
                         )}
                       </div>
@@ -312,7 +345,6 @@ export function CommandPalette({
                   );
                 }
 
-                // Quick Action row
                 return (
                   <button
                     key={item.id}
@@ -321,8 +353,8 @@ export function CommandPalette({
                     onClick={item.run}
                     className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left transition ${
                       isSelected
-                        ? 'bg-indigo-500/10 dark:bg-indigo-500/15'
-                        : 'hover:bg-zinc-100/80 dark:hover:bg-white/[0.04]'
+                        ? 'bg-zinc-100 dark:bg-white/[0.07]'
+                        : 'hover:bg-zinc-100/70 dark:hover:bg-white/[0.04]'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -361,17 +393,19 @@ export function CommandPalette({
         </div>
 
         {/* Footer Hints */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-zinc-200/80 bg-zinc-50/70 px-4 py-2.5 text-[11px] text-zinc-500 dark:border-white/[0.08] dark:bg-obsidian-950/60 dark:text-zinc-400">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-zinc-200/80 bg-zinc-50/70 px-4 py-2.5 text-[11px] text-zinc-500 dark:border-white/[0.08] dark:bg-[#09090B] dark:text-zinc-400">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1">
               <CornerDownLeft className="h-3 w-3" />
-              Enter: Mở Web Live
+              {lang === 'vi' ? 'Enter: Mở ứng dụng' : 'Enter: Open App'}
             </span>
-            <span>Shift+Enter: Xem Chi tiết</span>
+            <span>
+              {lang === 'vi' ? 'Shift+Enter: Xem kiến trúc' : 'Shift+Enter: Architecture'}
+            </span>
           </div>
           <span className="inline-flex items-center gap-1 font-mono text-[10px]">
             <Command className="h-3 w-3" />
-            Raycast-style Launcher
+            Command Palette
           </span>
         </div>
       </div>

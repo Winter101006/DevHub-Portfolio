@@ -6,7 +6,7 @@ import type {
   ProjectsConfigFile,
 } from '../types/project';
 
-const CONFIG_STORAGE_KEY = 'devhub_projects_config_override_v1';
+const CONFIG_STORAGE_KEY = 'devhub_projects_config_override_v2';
 
 function cloneDefaultConfig(): ProjectsConfigFile {
   return JSON.parse(JSON.stringify(DEFAULT_PROJECTS_CONFIG)) as ProjectsConfigFile;

@@ -1,161 +1,172 @@
-import {
-  Command,
-  LayoutGrid,
-  Moon,
-  RefreshCw,
-  Rocket,
-  Settings2,
-  Sun,
-  Terminal,
-} from 'lucide-react';
-import type { SyncSource } from '../hooks/useGitHubRepos';
-import type { ViewMode } from '../types/project';
+import { Command, Moon, Sun } from 'lucide-react';
+import { UI_DICT } from '../data/i18n';
+import type { Language, ViewMode } from '../types/project';
 
 interface NavbarProps {
   viewMode: ViewMode;
   onChangeViewMode: (mode: ViewMode) => void;
+  lang: Language;
+  onChangeLang: (lang: Language) => void;
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
   onOpenCommandPalette: () => void;
-  onOpenAdmin: () => void;
-  syncingGitHub: boolean;
-  syncSource: SyncSource;
-  onRefreshGitHub: () => void;
-  hasLocalEdits: boolean;
 }
 
 export function Navbar({
   viewMode,
   onChangeViewMode,
+  lang,
+  onChangeLang,
   theme,
   onToggleTheme,
   onOpenCommandPalette,
-  onOpenAdmin,
-  syncingGitHub,
-  syncSource,
-  onRefreshGitHub,
-  hasLocalEdits,
 }: NavbarProps) {
+  const t = UI_DICT[lang].nav;
+
+  const scrollToSection = (id: string) => {
+    if (viewMode !== 'portfolio') {
+      onChangeViewMode('portfolio');
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 60);
+      return;
+    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/80 backdrop-blur-xl dark:border-white/[0.08] dark:bg-obsidian-950/80">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        {/* Brand */}
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/20 via-violet-500/15 to-cyan-500/20 text-indigo-600 shadow-sm dark:text-indigo-300">
-            <Terminal className="h-4 w-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold tracking-tight text-zinc-900 dark:text-white sm:text-base">
-                Huân&apos;s DevHub
-              </span>
-              <span className="hidden rounded-md border border-zinc-200 bg-zinc-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-zinc-600 dark:border-white/10 dark:bg-white/[0.06] dark:text-zinc-300 sm:inline-block">
-                VNU-HUS K69
-              </span>
-            </div>
-            <p className="hidden text-[11px] text-zinc-500 dark:text-zinc-400 sm:block">
-              Personal Project Launcher &amp; Engineering Portfolio
-            </p>
-          </div>
+    <header className="sticky top-0 z-40 h-16 border-b border-zinc-200/70 bg-zinc-50/80 backdrop-blur-md dark:border-white/[0.06] dark:bg-[#09090B]/80">
+      <div className="mx-auto flex h-full max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
+        {/* Left: Minimalist Brand */}
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="font-mono text-sm font-bold tracking-tight text-zinc-900 transition hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400 sm:text-[15px]"
+          >
+            Huân.dev
+          </button>
+          <span className="hidden rounded-full border border-zinc-200/90 bg-zinc-100/80 px-2 py-0.5 font-mono text-[10px] font-medium text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400 sm:inline-block">
+            {t.badge}
+          </span>
         </div>
 
-        {/* Center Mode Switcher */}
-        <div className="order-3 flex w-full items-center justify-center sm:order-2 sm:w-auto">
-          <div className="inline-flex w-full rounded-xl border border-zinc-200/90 bg-zinc-100/90 p-1 dark:border-white/10 dark:bg-white/[0.04] sm:w-auto">
+        {/* Center: Smooth Scroll Navigation Links (Desktop) */}
+        {viewMode === 'portfolio' && (
+          <nav className="hidden items-center gap-6 md:flex">
+            <button
+              type="button"
+              onClick={() => scrollToSection('projects')}
+              className="text-xs font-medium text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+            >
+              {t.projects}
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToSection('research')}
+              className="text-xs font-medium text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+            >
+              {t.research}
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToSection('skills')}
+              className="text-xs font-medium text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+            >
+              {t.skills}
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToSection('contact')}
+              className="text-xs font-medium text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+            >
+              {t.contact}
+            </button>
+          </nav>
+        )}
+
+        {/* Right: Segmented Mode Control + ⌘K + VI|EN + Theme */}
+        <div className="flex items-center gap-2">
+          {/* 1. Segmented Control: [ Portfolio | Dev Launcher ] */}
+          <div className="inline-flex items-center rounded-lg border border-zinc-200/90 bg-zinc-100/90 p-0.5 dark:border-white/10 dark:bg-white/[0.04]">
             <button
               type="button"
               onClick={() => onChangeViewMode('portfolio')}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition sm:flex-initial ${
+              className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition ${
                 viewMode === 'portfolio'
                   ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-white'
-                  : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
               }`}
             >
-              <LayoutGrid className="h-3.5 w-3.5" />
-              Portfolio Mode
+              {t.portfolioMode}
             </button>
             <button
               type="button"
               onClick={() => onChangeViewMode('launcher')}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition sm:flex-initial ${
+              className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition ${
                 viewMode === 'launcher'
                   ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-white'
-                  : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
               }`}
             >
-              <Rocket className="h-3.5 w-3.5" />
-              Launcher Mode
+              {t.launcherMode}
             </button>
           </div>
-        </div>
 
-        {/* Right Utility Controls */}
-        <div className="order-2 flex items-center gap-2 sm:order-3">
-          {/* Command Palette Trigger */}
+          {/* 2. Quick Search Button: ⌘K / Ctrl+K */}
           <button
             type="button"
             onClick={onOpenCommandPalette}
-            className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:border-white/20 dark:hover:bg-white/[0.08]"
-            title="Mở Command Palette (Ctrl + K)"
+            title={t.searchTitle}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-white px-2.5 font-mono text-[11px] font-medium text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-white/10 dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
           >
-            <Command className="h-3.5 w-3.5 text-indigo-500" />
-            <span className="hidden md:inline">Tìm nhanh</span>
-            <kbd className="rounded border border-zinc-300 bg-white px-1.5 py-0.5 font-mono text-[10px] text-zinc-500 dark:border-white/15 dark:bg-obsidian-950 dark:text-zinc-400">
-              Ctrl K
-            </kbd>
+            <Command className="h-3 w-3 text-zinc-400" />
+            <span className="hidden sm:inline">Ctrl+K</span>
           </button>
 
-          {/* GitHub Sync Button */}
-          <button
-            type="button"
-            onClick={onRefreshGitHub}
-            disabled={syncingGitHub}
-            className="hidden items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900 disabled:opacity-60 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:border-white/20 lg:inline-flex"
-            title={`Nguồn GitHub hiện tại: ${
-              syncSource === 'live-api'
-                ? 'Live API'
-                : syncSource === 'cached'
-                  ? 'Local Cache'
-                  : 'Local Snapshot Fallback'
-            } — Bấm để đồng bộ lại`}
+          {/* 3. Language Toggle: VI | EN */}
+          <div
+            className="inline-flex h-8 items-center rounded-lg border border-zinc-200/90 bg-white p-0.5 font-mono text-[11px] font-semibold dark:border-white/10 dark:bg-white/[0.03]"
+            role="group"
+            aria-label="Language Switcher"
           >
-            <RefreshCw
-              className={`h-3.5 w-3.5 ${syncingGitHub ? 'animate-spin text-indigo-500' : ''}`}
-            />
-            <span>
-              {syncSource === 'live-api'
-                ? 'GitHub Live'
-                : syncSource === 'cached'
-                  ? 'GitHub Cached'
-                  : 'Local Fallback'}
-            </span>
-          </button>
+            <button
+              type="button"
+              onClick={() => onChangeLang('vi')}
+              className={`rounded px-1.5 py-0.5 transition ${
+                lang === 'vi'
+                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'
+              }`}
+            >
+              VI
+            </button>
+            <button
+              type="button"
+              onClick={() => onChangeLang('en')}
+              className={`rounded px-1.5 py-0.5 transition ${
+                lang === 'en'
+                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-950'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'
+              }`}
+            >
+              EN
+            </button>
+          </div>
 
-          {/* Manage Hub Button */}
-          <button
-            type="button"
-            onClick={onOpenAdmin}
-            className="relative inline-flex items-center gap-1.5 rounded-xl border border-indigo-500/25 bg-indigo-500/10 px-2.5 py-1.5 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-500/20 dark:border-indigo-400/25 dark:bg-indigo-500/15 dark:text-indigo-300"
-            title="Quản lý Ẩn/Hiện & Thêm dự án (Ctrl + Shift + E)"
-          >
-            <Settings2 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Manage Hub</span>
-            {hasLocalEdits && (
-              <span
-                className="h-1.5 w-1.5 rounded-full bg-amber-500"
-                title="Có tùy chỉnh cục bộ trong localStorage"
-              />
-            )}
-          </button>
-
-          {/* Theme Toggle */}
+          {/* 4. Dark / Light Mode Toggle */}
           <button
             type="button"
             onClick={onToggleTheme}
-            aria-label="Chuyển đổi Dark / Light Mode"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:border-white/20 dark:hover:bg-white/[0.08]"
+            aria-label={t.themeToggle}
+            title={t.themeToggle}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200/90 bg-white text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-white/10 dark:bg-white/[0.03] dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
           >
-            {theme === 'dark' ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-indigo-600" />}
+            {theme === 'dark' ? (
+              <Sun className="h-3.5 w-3.5 text-amber-400" />
+            ) : (
+              <Moon className="h-3.5 w-3.5 text-zinc-700" />
+            )}
           </button>
         </div>
       </div>

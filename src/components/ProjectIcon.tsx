@@ -15,23 +15,24 @@ import {
   Timer,
   Wallet,
 } from 'lucide-react';
-import type { DevHubProject, ServerHealthRecord } from '../types/project';
+import { UI_DICT } from '../data/i18n';
+import type { DevHubProject, Language, ServerHealthRecord } from '../types/project';
 
 const ACCENT_MAP: Record<string, string> = {
-  pink: 'bg-pink-500/10 text-pink-600 border-pink-500/20 dark:bg-pink-500/15 dark:text-pink-300 dark:border-pink-400/25',
+  pink: 'bg-pink-500/10 text-pink-600 border-pink-500/20 dark:bg-pink-500/10 dark:text-pink-300 dark:border-pink-400/20',
   indigo:
-    'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-400/25',
+    'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-400/20',
   emerald:
-    'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-400/25',
+    'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-400/20',
   violet:
-    'bg-violet-500/10 text-violet-600 border-violet-500/20 dark:bg-violet-500/15 dark:text-violet-300 dark:border-violet-400/25',
-  cyan: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20 dark:bg-cyan-500/15 dark:text-cyan-300 dark:border-cyan-400/25',
+    'bg-violet-500/10 text-violet-600 border-violet-500/20 dark:bg-violet-500/10 dark:text-violet-300 dark:border-violet-400/20',
+  cyan: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-300 dark:border-cyan-400/20',
   amber:
-    'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-400/25',
-  rose: 'bg-rose-500/10 text-rose-600 border-rose-500/20 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-400/25',
-  sky: 'bg-sky-500/10 text-sky-600 border-sky-500/20 dark:bg-sky-500/15 dark:text-sky-300 dark:border-sky-400/25',
-  teal: 'bg-teal-500/10 text-teal-600 border-teal-500/20 dark:bg-teal-500/15 dark:text-teal-300 dark:border-teal-400/25',
-  zinc: 'bg-zinc-500/10 text-zinc-700 border-zinc-500/20 dark:bg-zinc-500/15 dark:text-zinc-300 dark:border-zinc-400/25',
+    'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-400/20',
+  rose: 'bg-rose-500/10 text-rose-600 border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300 dark:border-rose-400/20',
+  sky: 'bg-sky-500/10 text-sky-600 border-sky-500/20 dark:bg-sky-500/10 dark:text-sky-300 dark:border-sky-400/20',
+  teal: 'bg-teal-500/10 text-teal-600 border-teal-500/20 dark:bg-teal-500/10 dark:text-teal-300 dark:border-teal-400/20',
+  zinc: 'bg-zinc-500/10 text-zinc-700 border-zinc-500/20 dark:bg-zinc-500/10 dark:text-zinc-300 dark:border-zinc-400/20',
 };
 
 export function ProjectIcon({
@@ -47,9 +48,9 @@ export function ProjectIcon({
     size === 'sm'
       ? 'h-8 w-8 rounded-lg'
       : size === 'lg'
-        ? 'h-14 w-14 rounded-2xl'
-        : 'h-10 w-10 rounded-xl';
-  const iconSize = size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-7 w-7' : 'h-5 w-5';
+        ? 'h-12 w-12 rounded-xl'
+        : 'h-9 w-9 rounded-lg';
+  const iconSize = size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-4 w-4';
   const tone = ACCENT_MAP[accentColor] || ACCENT_MAP.indigo;
 
   const renderGlyph = () => {
@@ -84,9 +85,7 @@ export function ProjectIcon({
   };
 
   return (
-    <div
-      className={`flex shrink-0 items-center justify-center border ${boxSize} ${tone}`}
-    >
+    <div className={`flex shrink-0 items-center justify-center border ${boxSize} ${tone}`}>
       {renderGlyph()}
     </div>
   );
@@ -96,21 +95,22 @@ export function ServerStatusPill({
   project,
   health,
   onPing,
+  lang = 'vi',
   compact = false,
 }: {
   project: DevHubProject;
   health?: ServerHealthRecord;
   onPing?: (project: DevHubProject) => void;
+  lang?: Language;
   compact?: boolean;
 }) {
+  const t = UI_DICT[lang].projects;
+
   if (!project.liveUrl) {
     return (
-      <span
-        className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-100/80 px-2.5 py-0.5 text-[11px] font-medium text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400"
-        title="Dự án chạy cục bộ / Notebook / Nghiên cứu"
-      >
-        <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-        {compact ? 'Local' : project.serverType === 'streamlit' ? 'Streamlit / Notebook' : 'Repo / Research'}
+      <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+        <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-600" />
+        {compact ? 'Repo' : t.statusResearch}
       </span>
     );
   }
@@ -121,9 +121,9 @@ export function ServerStatusPill({
 
   if (state === 'checking' || state === 'waking') {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/25 bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-medium text-sky-600 dark:text-sky-300">
+      <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-sky-600 dark:text-sky-400">
         <Loader2 className="h-3 w-3 animate-spin" />
-        {compact ? 'Đang đánh thức...' : health?.message || 'Đang đánh thức server...'}
+        {t.statusWaking}
       </span>
     );
   }
@@ -136,14 +136,10 @@ export function ServerStatusPill({
           e.stopPropagation();
           onPing?.(project);
         }}
-        className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-medium text-amber-700 transition hover:bg-amber-500/20 dark:text-amber-300"
-        title="Server Render có thể đang sleep sau 15 phút không dùng — Bấm để gửi tín hiệu đánh thức"
+        className="inline-flex items-center gap-1.5 font-mono text-[11px] text-amber-600 transition hover:text-amber-500 dark:text-amber-400"
       >
-        <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
-        </span>
-        {compact ? 'Cold Start · Wake' : 'Cold Start (Render - Click để đánh thức)'}
+        <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+        {compact ? 'Cold Start' : t.statusCold}
       </button>
     );
   }
@@ -156,11 +152,10 @@ export function ServerStatusPill({
           e.stopPropagation();
           onPing?.(project);
         }}
-        className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[11px] font-medium text-rose-600 transition hover:bg-rose-500/20 dark:text-rose-300"
-        title="Bấm để kiểm tra lại kết nối"
+        className="inline-flex items-center gap-1.5 font-mono text-[11px] text-rose-600 dark:text-rose-400"
       >
         <Activity className="h-3 w-3" />
-        {compact ? 'Retry Ping' : 'Chưa phản hồi (Thử lại)'}
+        Retry
       </button>
     );
   }
@@ -172,18 +167,10 @@ export function ServerStatusPill({
         e.stopPropagation();
         onPing?.(project);
       }}
-      className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 transition hover:bg-emerald-500/15 dark:text-emerald-300"
-      title="Bấm để đo lại độ trễ phản hồi thực tế"
+      className="inline-flex items-center gap-1.5 font-mono text-[11px] font-medium text-emerald-600 transition hover:opacity-80 dark:text-emerald-400"
     >
-      <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-      </span>
-      {compact
-        ? health?.latencyMs
-          ? `Online · ${health.latencyMs}ms`
-          : 'Online'
-        : health?.message || 'Online (Vercel / Fast)'}
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+      {health?.latencyMs ? `${t.statusLive} · ${health.latencyMs}ms` : t.statusLive}
     </button>
   );
 }

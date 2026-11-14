@@ -1,22 +1,19 @@
 import {
   ArrowUpRight,
   CheckCircle2,
-  Cpu,
   Edit3,
   Github,
-  Layers,
-  Pin,
   RefreshCw,
   X,
 } from 'lucide-react';
 import { useEffect } from 'react';
-import { CATEGORY_MAP } from '../data/projectsConfig';
-import type { DevHubProject, ServerHealthRecord } from '../types/project';
-import { formatRelativeDate } from '../utils/text';
-import { ProjectIcon, ServerStatusPill } from './ProjectIcon';
+import { getCategoryLabel, localizeProject, UI_DICT } from '../data/i18n';
+import type { DevHubProject, Language, ServerHealthRecord } from '../types/project';
+import { ServerStatusPill } from './ProjectIcon';
 
 interface ProjectDetailModalProps {
   project: DevHubProject | null;
+  lang: Language;
   health?: ServerHealthRecord;
   onClose: () => void;
   onPingServer: (project: DevHubProject) => void;
@@ -25,6 +22,7 @@ interface ProjectDetailModalProps {
 
 export function ProjectDetailModal({
   project,
+  lang,
   health,
   onClose,
   onPingServer,
@@ -41,108 +39,86 @@ export function ProjectDetailModal({
 
   if (!project) return null;
 
-  const category = CATEGORY_MAP[project.category];
+  const localized = localizeProject(project, lang);
+  const t = UI_DICT[lang].drawer;
+  const categoryLabel = getCategoryLabel(localized.category, lang);
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-3 backdrop-blur-sm sm:p-6"
+      className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm"
       onClick={onClose}
     >
+      {/* Slide-over Drawer Panel */}
       <div
-        className="animate-scale-in relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl dark:border-white/15 dark:bg-obsidian-900"
+        className="flex h-full w-full max-w-2xl flex-col border-l border-zinc-200 bg-white shadow-2xl dark:border-white/10 dark:bg-[#09090B]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 border-b border-zinc-200/80 px-6 py-5 dark:border-white/[0.08]">
-          <div className="flex items-start gap-4">
-            <ProjectIcon
-              icon={project.icon}
-              accentColor={project.accentColor}
-              size="lg"
-            />
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${category.badgeClass}`}
-                >
-                  <span className={`h-1.5 w-1.5 rounded-full ${category.dotClass}`} />
-                  {category.label}
-                </span>
-                {project.pinned && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-300">
-                    <Pin className="h-2.5 w-2.5" />
-                    Nổi bật
-                  </span>
-                )}
-                {project.updatedAt && (
-                  <span className="font-mono text-[11px] text-zinc-400">
-                    Cập nhật: {formatRelativeDate(project.updatedAt)}
-                  </span>
-                )}
-              </div>
-              <h2 className="mt-2 text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
-                {project.title}
-              </h2>
+        {/* Top Bar */}
+        <div className="flex items-start justify-between gap-4 border-b border-zinc-200/80 px-6 py-5 dark:border-white/[0.07]">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-[10px] font-medium text-zinc-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">
+                {categoryLabel}
+              </span>
+              <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                {localized.year}
+              </span>
+              <ServerStatusPill
+                project={localized}
+                health={health}
+                onPing={onPingServer}
+                lang={lang}
+              />
             </div>
+
+            <h2 className="mt-2.5 text-xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
+              {localized.title}
+            </h2>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl p-2 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-white/10 dark:hover:text-white"
-            aria-label="Đóng chi tiết dự án"
+            className="rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-white/10 dark:hover:text-white"
+            aria-label={t.close}
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
-          {/* Live Status Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-200/80 bg-zinc-50/80 p-3.5 dark:border-white/[0.08] dark:bg-white/[0.03]">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <ServerStatusPill
-                project={project}
-                health={health}
-                onPing={onPingServer}
-              />
-              {project.liveUrl && (
-                <span className="truncate font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                  {project.liveUrl}
-                </span>
-              )}
-            </div>
-            {project.liveUrl && (
+        <div className="flex-1 space-y-7 overflow-y-auto px-6 py-6">
+          {/* Live Endpoint Banner (if liveUrl exists) */}
+          {localized.liveUrl && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-zinc-200/80 bg-zinc-50 px-4 py-3 dark:border-white/[0.07] dark:bg-white/[0.02]">
+              <a
+                href={localized.liveUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="truncate font-mono text-xs text-indigo-600 hover:underline dark:text-indigo-400"
+              >
+                {localized.liveUrl}
+              </a>
               <button
                 type="button"
                 onClick={() => onPingServer(project)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-zinc-700 transition hover:bg-zinc-100 dark:border-white/10 dark:bg-white/[0.05] dark:text-zinc-200"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-[11px] font-medium text-zinc-700 transition hover:bg-zinc-100 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300"
               >
                 <RefreshCw className="h-3 w-3" />
-                Ping / Đánh thức
+                {t.pingBtn}
               </button>
-            )}
-          </div>
-
-          {/* Tầng 1: Tagline */}
-          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-4 dark:border-indigo-400/20 dark:bg-indigo-500/10">
-            <div className="font-mono text-[10px] font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-300">
-              1 · Tagline (Tóm tắt 3 giây)
             </div>
-            <p className="mt-1.5 text-sm font-semibold leading-relaxed text-zinc-900 dark:text-white sm:text-base">
-              {project.tagline}
-            </p>
-          </div>
+          )}
 
-          {/* Metrics Grid (if available) */}
-          {project.metrics && project.metrics.length > 0 && (
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-              {project.metrics.map((metric) => (
+          {/* Metrics Row */}
+          {localized.metrics && localized.metrics.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {localized.metrics.map((metric) => (
                 <div
                   key={metric.label}
-                  className="rounded-xl border border-zinc-200/80 bg-zinc-50 p-3 dark:border-white/[0.08] dark:bg-white/[0.03]"
+                  className="rounded-xl border border-zinc-200/80 bg-zinc-50/70 p-3 dark:border-white/[0.07] dark:bg-white/[0.02]"
                 >
-                  <div className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     {metric.label}
                   </div>
                   <div className="mt-1 font-mono text-sm font-bold text-zinc-900 dark:text-white">
@@ -153,40 +129,48 @@ export function ProjectDetailModal({
             </div>
           )}
 
-          {/* Tầng 2: Overview */}
+          {/* 01 · Tagline */}
           <div>
-            <div className="flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              <Layers className="h-3.5 w-3.5 text-emerald-500" />
-              2 · Overview — Bài toán thực tế &amp; Giá trị sử dụng
+            <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              {t.taglineLabel}
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-              {project.overview}
+            <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-900 dark:text-zinc-100 sm:text-base">
+              {localized.tagline}
             </p>
           </div>
 
-          {/* Architecture Flow (if available) */}
-          {project.architectureSummary && (
-            <div className="rounded-2xl border border-zinc-200/80 bg-zinc-950/[0.03] p-4 dark:border-white/[0.08] dark:bg-black/40">
-              <div className="font-mono text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                System Architecture Pipeline
+          {/* 02 · Overview */}
+          <div>
+            <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              {t.overviewLabel}
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+              {localized.overview}
+            </p>
+          </div>
+
+          {/* 03 · Architecture Flow */}
+          {localized.architectureSummary && (
+            <div>
+              <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                {t.archLabel}
               </div>
-              <p className="mt-1.5 font-mono text-xs leading-relaxed text-indigo-700 dark:text-indigo-300">
-                {project.architectureSummary}
-              </p>
+              <div className="mt-2 rounded-xl border border-zinc-200/80 bg-zinc-50 p-4 font-mono text-xs leading-relaxed text-indigo-700 dark:border-white/[0.07] dark:bg-white/[0.02] dark:text-indigo-300">
+                {localized.architectureSummary}
+              </div>
             </div>
           )}
 
-          {/* Tầng 3: Technical Highlights */}
+          {/* 04 · Technical Highlights */}
           <div>
-            <div className="flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              <Cpu className="h-3.5 w-3.5 text-violet-500" />
-              3 · Technical Highlights — Kiến trúc &amp; Thuật toán nổi bật
+            <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              {t.highlightsLabel}
             </div>
             <ul className="mt-3 space-y-2.5">
-              {project.technicalHighlights.map((point, index) => (
+              {localized.technicalHighlights.map((point, index) => (
                 <li
                   key={index}
-                  className="flex items-start gap-2.5 rounded-xl border border-zinc-200/70 bg-zinc-50/70 p-3 text-xs leading-relaxed text-zinc-700 dark:border-white/[0.06] dark:bg-white/[0.025] dark:text-zinc-300 sm:text-sm"
+                  className="flex items-start gap-2.5 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300"
                 >
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                   <span>{point}</span>
@@ -195,16 +179,16 @@ export function ProjectDetailModal({
             </ul>
           </div>
 
-          {/* Tech Stack */}
+          {/* 05 · Tech Stack */}
           <div>
-            <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Công nghệ sử dụng
+            <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              {t.techLabel}
             </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {project.techStack.map((tech) => (
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {localized.techStack.map((tech) => (
                 <span
                   key={tech}
-                  className="rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 font-mono text-xs font-medium text-zinc-800 dark:border-white/10 dark:bg-white/[0.05] dark:text-zinc-200"
+                  className="rounded-md border border-zinc-200/80 bg-zinc-100/80 px-2.5 py-1 font-mono text-xs text-zinc-700 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300"
                 >
                   {tech}
                 </span>
@@ -214,37 +198,37 @@ export function ProjectDetailModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200/80 bg-zinc-50/70 px-6 py-4 dark:border-white/[0.08] dark:bg-obsidian-950/60">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200/80 bg-zinc-50/80 px-6 py-4 dark:border-white/[0.07] dark:bg-[#09090B]">
           <button
             type="button"
             onClick={() => onEditProject(project)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-3.5 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-100 dark:border-white/10 dark:bg-white/[0.05] dark:text-zinc-200"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-500 transition hover:bg-zinc-200/60 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.06] dark:hover:text-white"
           >
             <Edit3 className="h-3.5 w-3.5" />
-            Sửa thông tin
+            <span>{t.editBtn}</span>
           </button>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            {project.githubUrl && (
+            {localized.githubUrl && (
               <a
-                href={project.githubUrl}
+                href={localized.githubUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-800 transition hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/15 dark:bg-white/[0.06] dark:text-white dark:hover:bg-white/[0.1]"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3.5 py-2 text-xs font-semibold text-zinc-800 transition hover:bg-zinc-100 dark:border-white/15 dark:bg-white/[0.04] dark:text-white dark:hover:bg-white/[0.08]"
               >
                 <Github className="h-3.5 w-3.5" />
-                GitHub Repo
+                <span>{t.githubBtn}</span>
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </a>
             )}
-            {project.liveUrl && (
+            {localized.liveUrl && (
               <a
-                href={project.liveUrl}
+                href={localized.liveUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-semibold text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
               >
-                Mở Web Live
+                <span>{t.liveBtn}</span>
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </a>
             )}
