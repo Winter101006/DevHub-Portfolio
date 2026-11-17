@@ -145,7 +145,7 @@ export function App() {
     }
   }, [lang]);
 
-  // Global keyboard shortcuts: Ctrl+K (Command Palette) & Ctrl+Shift+E (Admin Manager)
+  // Global keyboard shortcuts: Ctrl+K (Command Palette), Ctrl+Shift+E (Admin Manager), 1-4 (Sections)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       const mod = e.ctrlKey || e.metaKey;
@@ -158,11 +158,33 @@ export function App() {
         e.preventDefault();
         setEditTarget(null);
         setAdminOpen((prev) => !prev);
+        return;
+      }
+
+      const tag = document.activeElement?.tagName;
+      if (
+        !mod &&
+        !e.altKey &&
+        tag !== 'INPUT' &&
+        tag !== 'TEXTAREA' &&
+        tag !== 'SELECT' &&
+        viewMode === 'portfolio'
+      ) {
+        const sectionMap: Record<string, string> = {
+          '1': 'projects',
+          '2': 'research',
+          '3': 'skills',
+          '4': 'contact',
+        };
+        const targetId = sectionMap[e.key];
+        if (targetId) {
+          document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
+  }, [viewMode]);
 
   const handleCopyText = useCallback(
     async (label: string, value: string) => {
@@ -186,13 +208,13 @@ export function App() {
       notify(
         lang === 'vi' ? 'Đồng bộ GitHub thành công' : 'GitHub Synced',
         lang === 'vi'
-          ? `Quét được ${result.count} repositories từ @${PROFILE_CONFIG.githubUsername}.`
-          : `Fetched ${result.count} repositories from @${PROFILE_CONFIG.githubUsername}.`
+          ? `Quét được ${result.count} repositories từ @${PROFILE_CONFIG.githubUsername}`
+          : `Fetched ${result.count} repositories from @${PROFILE_CONFIG.githubUsername}`
       );
     } else {
       notify(
         lang === 'vi' ? 'Đang dùng dữ liệu dự phòng' : 'Using cached repository data',
-        `${result.count} repositories loaded.`,
+        `${result.count} repositories loaded`,
         'warning'
       );
     }
@@ -215,8 +237,8 @@ export function App() {
             ? `Đã gửi tín hiệu đánh thức ${project.title}`
             : `Sent wake-up signal to ${project.title}`,
           lang === 'vi'
-            ? 'Container Render đang khởi động (~20–40 giây).'
-            : 'Render container is spinning up (~20–40s).',
+            ? 'Container Render đang khởi động (~20–40 giây)'
+            : 'Render container is spinning up (~20–40s)',
           'info'
         );
       }
@@ -227,8 +249,8 @@ export function App() {
   const handleWakeAll = useCallback(async () => {
     notify(
       lang === 'vi'
-        ? 'Đang kiểm tra toàn bộ Servers...'
-        : 'Pinging all live endpoints...',
+        ? 'Đang kiểm tra toàn bộ Servers'
+        : 'Pinging all live endpoints',
       undefined,
       'info'
     );
@@ -236,10 +258,17 @@ export function App() {
     notify(
       lang === 'vi' ? 'Hoàn tất kiểm tra Server' : 'Health check complete',
       lang === 'vi'
-        ? `${res.online}/${res.total} endpoints phản hồi sẵn sàng.`
-        : `${res.online}/${res.total} endpoints responded online.`
+        ? `${res.online}/${res.total} endpoints phản hồi sẵn sàng`
+        : `${res.online}/${res.total} endpoints responded online`
     );
   }, [wakeUpAllServers, notify, lang]);
+
+  const handleFilterBySkill = useCallback((skill: string) => {
+    const keyword = skill.split('/')[0].split('(')[0].trim();
+    setActiveTab('all');
+    setSearchQuery(keyword);
+    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   const visibleProjects = useMemo(
     () => projects.filter((p) => !p.hidden),
@@ -253,9 +282,6 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-zinc-900 transition-colors dark:bg-[#09090B] dark:text-zinc-100">
-      {/* Subtle Top Radial Highlight */}
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-80 bg-gradient-to-b from-indigo-500/[0.04] to-transparent dark:from-indigo-500/[0.07]" />
-
       {/* 1. Clean Sticky Navbar (64px) */}
       <Navbar
         viewMode={viewMode}
@@ -278,7 +304,7 @@ export function App() {
               onOpenResume={() => setResumeOpen(true)}
             />
 
-            {/* 01. SELECTED WORKS (#projects) */}
+            {/* 01 · SELECTED WORKS (#projects) */}
             <ProjectCommandCenter
               projects={projects}
               lang={lang}
@@ -291,16 +317,18 @@ export function App() {
               onOpenDetail={(p) => setSelectedProjectId(p.id)}
             />
 
-            {/* 02. RESEARCH & EXPERIENCE (#research) */}
+            {/* 02 · RESEARCH & EXPERIENCE (#research) */}
             <section
               id="research"
               className="scroll-mt-20 border-t border-zinc-200/80 py-14 dark:border-white/[0.06] sm:py-16"
             >
               <div className="max-w-2xl">
-                <div className="font-mono text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
-                  {tResearch.eyebrow}
+                <div className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                  {lang === 'vi'
+                    ? '02 · Nghiên cứu & Đào tạo'
+                    : '02 · Research & Academic background'}
                 </div>
-                <h2 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
                   {tResearch.title}
                 </h2>
               </div>
@@ -311,15 +339,15 @@ export function App() {
                     key={item.role}
                     className="grid grid-cols-1 gap-4 py-7 first:pt-0 last:pb-0 md:grid-cols-12 md:gap-8"
                   >
-                    <div className="font-mono text-xs font-medium text-zinc-400 dark:text-zinc-500 md:col-span-3 md:pt-1">
+                    <div className="font-mono text-xs tabular-nums text-zinc-500 dark:text-zinc-400 md:col-span-3 md:pt-1">
                       {item.period}
                     </div>
                     <div className="space-y-2.5 md:col-span-9">
                       <div>
-                        <h3 className="text-base font-bold text-zinc-900 dark:text-white">
+                        <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
                           {item.role}
                         </h3>
-                        <p className="mt-0.5 text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                        <p className="mt-0.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
                           {item.org}
                         </p>
                       </div>
@@ -343,40 +371,51 @@ export function App() {
               </div>
             </section>
 
-            {/* 03. TECH ARSENAL (#skills) */}
+            {/* 03 · TECH ARSENAL (#skills) */}
             <section
               id="skills"
               className="scroll-mt-20 border-t border-zinc-200/80 py-14 dark:border-white/[0.06] sm:py-16"
             >
-              <div className="max-w-2xl">
-                <div className="font-mono text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
-                  {tSkills.eyebrow}
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                <div className="max-w-2xl">
+                  <div className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                    {lang === 'vi' ? '03 · Năng lực công nghệ' : '03 · Tech stack'}
+                  </div>
+                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
+                    {tSkills.title}
+                  </h2>
                 </div>
-                <h2 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
-                  {tSkills.title}
-                </h2>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  {lang === 'vi'
+                    ? 'Bấm vào từng công nghệ để lọc dự án tương ứng'
+                    : 'Click any technology to filter matching projects'}
+                </span>
               </div>
 
               <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
                 {tSkills.groups.map((group) => (
                   <div
                     key={group.title}
-                    className="rounded-xl border border-zinc-200/80 bg-white/60 p-6 dark:border-white/[0.07] dark:bg-white/[0.015]"
+                    className="flex h-full flex-col justify-between rounded-xl border border-zinc-200/85 bg-white p-6 dark:border-white/[0.08] dark:bg-[#111113]"
                   >
-                    <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
-                      {group.title}
-                    </h3>
-                    <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-                      {group.subtitle}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-1.5">
+                    <div>
+                      <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                        {group.title}
+                      </h3>
+                      <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                        {group.subtitle}
+                      </p>
+                    </div>
+                    <div className="mt-5 flex flex-wrap gap-1.5">
                       {group.items.map((skill) => (
-                        <span
+                        <button
                           key={skill}
-                          className="rounded-md bg-zinc-100 px-2.5 py-1 font-mono text-xs font-medium text-zinc-700 dark:bg-white/[0.05] dark:text-zinc-200"
+                          type="button"
+                          onClick={() => handleFilterBySkill(skill)}
+                          className="rounded-md border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 font-mono text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
                         >
                           {skill}
-                        </span>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -384,27 +423,27 @@ export function App() {
               </div>
             </section>
 
-            {/* 04. CONTACT (#contact) */}
+            {/* 04 · CONTACT (#contact) */}
             <section
               id="contact"
               className="scroll-mt-20 border-t border-zinc-200/80 py-14 dark:border-white/[0.06] sm:py-16"
             >
-              <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
-                <div className="max-w-xl">
-                  <div className="font-mono text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
-                    {tContact.eyebrow}
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center">
+                <div className="lg:col-span-7">
+                  <div className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                    {lang === 'vi' ? '04 · Liên hệ & Kết nối' : '04 · Contact'}
                   </div>
-                  <h2 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
+                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
                     {tContact.title}
                   </h2>
-                  <p className="mt-2.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
                     {tContact.desc}
                   </p>
 
-                  <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <div className="mt-6 flex flex-wrap items-center gap-2.5">
                     <a
                       href={`mailto:${PROFILE_CONFIG.email}`}
-                      className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-zinc-900 px-4 text-xs font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
                     >
                       <Mail className="h-3.5 w-3.5" />
                       <span>{tContact.sendMailBtn}</span>
@@ -413,7 +452,7 @@ export function App() {
                     <button
                       type="button"
                       onClick={() => setResumeOpen(true)}
-                      className="inline-flex items-center gap-2 rounded-lg border border-zinc-300/90 px-4 py-2.5 text-xs font-semibold text-zinc-800 transition hover:bg-zinc-100 dark:border-white/15 dark:text-zinc-200 dark:hover:bg-white/[0.06]"
+                      className="inline-flex h-10 items-center gap-2 rounded-lg border border-zinc-200/90 bg-white px-4 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-[#111113] dark:text-zinc-200 dark:hover:bg-white/[0.06]"
                     >
                       <FileText className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
                       <span>{tContact.openResumeBtn}</span>
@@ -423,7 +462,7 @@ export function App() {
                       href={PROFILE_CONFIG.githubUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200/90 px-3.5 py-2.5 text-xs font-medium text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
+                      className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-white px-3.5 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-300 hover:text-zinc-900 dark:border-white/10 dark:bg-[#111113] dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
                     >
                       <Github className="h-3.5 w-3.5" />
                       <span>GitHub</span>
@@ -432,14 +471,14 @@ export function App() {
                   </div>
                 </div>
 
-                {/* Clean Email Copy Rows */}
-                <div className="w-full max-w-md space-y-2.5">
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200/80 bg-white/60 px-4 py-3 dark:border-white/[0.07] dark:bg-white/[0.015]">
+                {/* Symmetrical Email Copy Rows */}
+                <div className="space-y-3 lg:col-span-5">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200/85 bg-white px-4 py-3.5 dark:border-white/[0.08] dark:bg-[#111113]">
                     <div className="min-w-0">
-                      <div className="font-mono text-[10px] uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
                         {tContact.primaryEmailLabel}
                       </div>
-                      <div className="truncate font-mono text-xs font-medium text-zinc-900 dark:text-zinc-100">
+                      <div className="mt-0.5 truncate font-mono text-xs font-medium text-zinc-900 dark:text-zinc-100">
                         {PROFILE_CONFIG.email}
                       </div>
                     </div>
@@ -448,19 +487,19 @@ export function App() {
                       onClick={() =>
                         handleCopyText(tContact.primaryEmailLabel, PROFILE_CONFIG.email)
                       }
-                      className="inline-flex shrink-0 items-center gap-1 rounded-md border border-zinc-200/90 px-2.5 py-1 text-[11px] font-medium text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
+                      className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-zinc-50 px-2.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:text-white"
                     >
                       <Copy className="h-3 w-3" />
                       <span>{tContact.copyBtn}</span>
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200/80 bg-white/60 px-4 py-3 dark:border-white/[0.07] dark:bg-white/[0.015]">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200/85 bg-white px-4 py-3.5 dark:border-white/[0.08] dark:bg-[#111113]">
                     <div className="min-w-0">
-                      <div className="font-mono text-[10px] uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
                         {tContact.academicEmailLabel}
                       </div>
-                      <div className="truncate font-mono text-xs font-medium text-zinc-900 dark:text-zinc-100">
+                      <div className="mt-0.5 truncate font-mono text-xs font-medium text-zinc-900 dark:text-zinc-100">
                         {PROFILE_CONFIG.academicEmail}
                       </div>
                     </div>
@@ -472,7 +511,7 @@ export function App() {
                           PROFILE_CONFIG.academicEmail
                         )
                       }
-                      className="inline-flex shrink-0 items-center gap-1 rounded-md border border-zinc-200/90 px-2.5 py-1 text-[11px] font-medium text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
+                      className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-zinc-50 px-2.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:text-white"
                     >
                       <Copy className="h-3 w-3" />
                       <span>{tContact.copyBtn}</span>
@@ -501,7 +540,7 @@ export function App() {
           />
         )}
 
-        {/* Minimalist Footer with tiny gear icon for Manage Hub */}
+        {/* Minimalist Footer */}
         <footer className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-zinc-200/80 pt-8 text-xs text-zinc-500 dark:border-white/[0.06] dark:text-zinc-500 sm:flex-row">
           <div>
             © {new Date().getFullYear()}{' '}
@@ -512,6 +551,8 @@ export function App() {
           </div>
 
           <div className="flex items-center gap-3 font-mono text-[11px]">
+            <span>1–4 Sections</span>
+            <span>·</span>
             <span>Ctrl+K</span>
             <button
               type="button"
@@ -521,7 +562,7 @@ export function App() {
               }}
               title={tFooter.manageTooltip}
               aria-label={tFooter.manageTooltip}
-              className="rounded p-1 text-zinc-400 opacity-60 transition hover:bg-zinc-200/60 hover:text-zinc-700 hover:opacity-100 dark:hover:bg-white/[0.06] dark:hover:text-zinc-300"
+              className="rounded p-1 text-zinc-400 opacity-60 transition-colors hover:bg-zinc-200/60 hover:text-zinc-700 hover:opacity-100 dark:hover:bg-white/[0.06] dark:hover:text-zinc-300"
             >
               <Settings2 className="h-3.5 w-3.5" />
             </button>
