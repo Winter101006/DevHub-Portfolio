@@ -8,13 +8,15 @@ import {
   Loader2,
   RefreshCw,
   Settings2,
+  Sparkles,
   Terminal,
   Zap,
 } from 'lucide-react';
 import { getCategoryLabel, localizeProject, UI_DICT } from '../data/i18n';
 import { PROFILE_CONFIG } from '../data/profileConfig';
+import { CATEGORY_MAP } from '../data/projectsConfig';
 import type { DevHubProject, Language, ServerHealthRecord } from '../types/project';
-import { ServerStatusPill } from './ProjectIcon';
+import { ProjectIcon, ServerStatusPill } from './ProjectIcon';
 
 interface LauncherDashboardProps {
   projects: DevHubProject[];
@@ -50,17 +52,18 @@ export function LauncherDashboard({
   const liveProjects = visibleProjects.filter((p) => Boolean(p.liveUrl));
 
   return (
-    <div className="animate-fade-up space-y-12 py-10 sm:py-12">
+    <div className="space-y-8 py-8">
       {/* 1. Command Center Header & Operational Controls */}
-      <div className="flex flex-col justify-between gap-6 border-b border-zinc-200/80 pb-8 dark:border-white/[0.07] lg:flex-row lg:items-end">
+      <div className="bento-card flex flex-col justify-between gap-5 p-6 sm:p-8 lg:flex-row lg:items-center">
         <div className="max-w-2xl">
-          <div className="font-mono text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/90 px-3 py-1 font-mono text-xs font-bold text-indigo-700 dark:border-indigo-400/25 dark:bg-indigo-500/15 dark:text-indigo-300">
+            <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
             {t.eyebrow}
-          </div>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
-            {t.title}
+          </span>
+          <h1 className="mt-2.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+            <span className="gemini-gradient-text">{t.title}</span>
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+          <p className="mt-1.5 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
             {t.desc}
           </p>
         </div>
@@ -70,7 +73,7 @@ export function LauncherDashboard({
             type="button"
             onClick={onWakeAllServers}
             disabled={wakingAll || liveProjects.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-zinc-800 disabled:opacity-60 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+            className="gemini-btn-primary inline-flex h-10 items-center gap-2 rounded-xl px-4 text-xs font-bold disabled:opacity-60"
           >
             {wakingAll ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -84,7 +87,7 @@ export function LauncherDashboard({
             type="button"
             onClick={onRefreshGitHub}
             disabled={syncingGitHub}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300/90 bg-white px-3 py-2 text-xs font-medium text-zinc-700 transition hover:bg-zinc-100 disabled:opacity-60 dark:border-white/15 dark:bg-white/[0.03] dark:text-zinc-200 dark:hover:bg-white/[0.07]"
+            className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50/80 px-3.5 text-xs font-bold text-indigo-700 transition hover:bg-indigo-100 disabled:opacity-60 dark:border-indigo-400/30 dark:bg-indigo-500/15 dark:text-indigo-200"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${syncingGitHub ? 'animate-spin' : ''}`} />
             <span>{t.syncGithubBtn}</span>
@@ -93,7 +96,7 @@ export function LauncherDashboard({
           <button
             type="button"
             onClick={onOpenAdmin}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300/90 bg-white px-3 py-2 text-xs font-medium text-zinc-700 transition hover:bg-zinc-100 dark:border-white/15 dark:bg-white/[0.03] dark:text-zinc-200 dark:hover:bg-white/[0.07]"
+            className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200"
           >
             <Settings2 className="h-3.5 w-3.5 text-indigo-500" />
             <span>{t.manageHubBtn}</span>
@@ -102,9 +105,9 @@ export function LauncherDashboard({
           <button
             type="button"
             onClick={onOpenCommandPalette}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-zinc-100/80 px-3 py-2 font-mono text-xs text-zinc-600 transition hover:text-zinc-900 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:text-white"
+            className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-indigo-100 bg-white px-3 font-mono text-xs font-semibold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 dark:border-indigo-500/20 dark:bg-white/[0.04] dark:text-slate-300"
           >
-            <Command className="h-3.5 w-3.5" />
+            <Command className="h-3.5 w-3.5 text-indigo-500" />
             <span>Ctrl+K</span>
           </button>
         </div>
@@ -112,44 +115,51 @@ export function LauncherDashboard({
 
       {/* 2. Real-Time Service Health & Endpoints Table */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-emerald-500" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
-              {t.healthSectionTitle} ({liveProjects.length})
-            </h2>
-          </div>
+        <div className="flex items-center gap-2">
+          <Activity className="h-4 w-4 text-emerald-500" />
+          <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-900 dark:text-white">
+            {t.healthSectionTitle} ({liveProjects.length})
+          </h2>
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-zinc-200/80 bg-white/60 dark:border-white/[0.07] dark:bg-white/[0.015]">
+        <div className="bento-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="border-b border-zinc-200/80 font-mono text-[11px] uppercase tracking-wider text-zinc-400 dark:border-white/[0.07] dark:text-zinc-500">
-                  <th className="px-4 py-3 font-medium">Service</th>
-                  <th className="hidden px-4 py-3 font-medium sm:table-cell">Platform</th>
-                  <th className="hidden px-4 py-3 font-medium md:table-cell">Endpoint URL</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 text-right font-medium">Actions</th>
+                <tr className="border-b border-indigo-100/80 bg-indigo-50/40 font-mono text-[11px] uppercase tracking-wider text-indigo-700 dark:border-indigo-500/15 dark:bg-indigo-500/10 dark:text-indigo-300">
+                  <th className="px-4 py-3.5 font-bold">Service</th>
+                  <th className="hidden px-4 py-3.5 font-bold sm:table-cell">Platform</th>
+                  <th className="hidden px-4 py-3.5 font-bold md:table-cell">Endpoint URL</th>
+                  <th className="px-4 py-3.5 font-bold">Status</th>
+                  <th className="px-4 py-3.5 text-right font-bold">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-200/60 text-xs dark:divide-white/[0.05]">
+              <tbody className="divide-y divide-indigo-100/60 text-xs dark:divide-indigo-500/10">
                 {liveProjects.map((project) => (
                   <tr
                     key={project.id}
-                    className="transition hover:bg-zinc-100/60 dark:hover:bg-white/[0.02]"
+                    className="transition hover:bg-indigo-50/40 dark:hover:bg-indigo-500/5"
                   >
-                    <td className="px-4 py-3.5 font-semibold text-zinc-900 dark:text-white">
-                      {project.title}
+                    <td className="px-4 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <ProjectIcon
+                          icon={project.icon}
+                          accentColor={project.accentColor}
+                          size="sm"
+                        />
+                        <span className="font-bold text-slate-900 dark:text-white">
+                          {project.title}
+                        </span>
+                      </div>
                     </td>
-                    <td className="hidden px-4 py-3.5 font-mono text-[11px] text-zinc-500 dark:text-zinc-400 sm:table-cell">
+                    <td className="hidden px-4 py-3.5 font-mono text-[11px] text-slate-500 dark:text-slate-400 sm:table-cell">
                       {project.serverType === 'render'
                         ? project.keepAlive
                           ? 'Render + Neon DB (24/7)'
                           : 'Render Cloud'
                         : 'Vercel / Cloud'}
                     </td>
-                    <td className="hidden max-w-xs truncate px-4 py-3.5 font-mono text-[11px] text-zinc-500 dark:text-zinc-400 md:table-cell">
+                    <td className="hidden max-w-xs truncate px-4 py-3.5 font-mono text-[11px] text-indigo-600 dark:text-indigo-300 md:table-cell">
                       {project.liveUrl}
                     </td>
                     <td className="px-4 py-3.5">
@@ -165,7 +175,7 @@ export function LauncherDashboard({
                         <button
                           type="button"
                           onClick={() => onPingServer(project)}
-                          className="rounded-md border border-zinc-200/90 px-2.5 py-1 font-mono text-[11px] text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
+                          className="rounded-lg border border-indigo-100 bg-indigo-50/70 px-2.5 py-1 font-mono text-[11px] font-semibold text-indigo-700 transition hover:bg-indigo-100 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300"
                         >
                           {t.pingNow}
                         </button>
@@ -174,7 +184,7 @@ export function LauncherDashboard({
                             href={project.liveUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 rounded-md bg-zinc-900 px-2.5 py-1 text-[11px] font-semibold text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+                            className="gemini-btn-primary inline-flex items-center gap-1 rounded-lg px-3 py-1 text-[11px] font-bold"
                           >
                             <span>{t.openApp}</span>
                             <ArrowUpRight className="h-3 w-3" />
@@ -194,7 +204,7 @@ export function LauncherDashboard({
       <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Terminal className="h-4 w-4 text-indigo-500" />
-          <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
+          <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-900 dark:text-white">
             {t.consolesTitle}
           </h2>
         </div>
@@ -206,17 +216,24 @@ export function LauncherDashboard({
               href={consoleLink.url}
               target="_blank"
               rel="noreferrer"
-              className="group flex flex-col justify-between rounded-xl border border-zinc-200/80 bg-white/60 p-3.5 transition hover:border-zinc-300 dark:border-white/[0.07] dark:bg-white/[0.015] dark:hover:border-white/20"
+              className="bento-card-hover group flex items-center gap-3 p-3.5"
             >
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold text-zinc-900 dark:text-white">
-                  {consoleLink.name}
-                </span>
-                <ExternalLink className="h-3 w-3 text-zinc-400 transition group-hover:text-zinc-900 dark:group-hover:text-white" />
-              </div>
-              <span className="mt-2 truncate font-mono text-[10px] text-zinc-500 dark:text-zinc-400">
-                {consoleLink.subtitle}
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold shadow-sm ${consoleLink.colorClass}`}
+              >
+                {consoleLink.icon}
               </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="truncate text-xs font-bold text-slate-900 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-300">
+                    {consoleLink.name}
+                  </span>
+                  <ExternalLink className="h-3 w-3 shrink-0 text-slate-400 transition group-hover:text-indigo-500" />
+                </div>
+                <div className="truncate text-[10px] text-slate-500 dark:text-slate-400">
+                  {consoleLink.subtitle}
+                </div>
+              </div>
             </a>
           ))}
         </div>
@@ -225,72 +242,85 @@ export function LauncherDashboard({
       {/* 4. All Projects & GitHub Repositories Quick Launcher */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Layers className="h-4 w-4 text-zinc-500" />
-          <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
+          <Layers className="h-4 w-4 text-indigo-500" />
+          <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-900 dark:text-white">
             {t.reposTitle} ({visibleProjects.length})
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {visibleProjects.map((project) => (
-            <div
-              key={project.id}
-              className="flex flex-col justify-between rounded-xl border border-zinc-200/80 bg-white/60 p-4 transition hover:border-zinc-300 dark:border-white/[0.07] dark:bg-white/[0.015] dark:hover:border-white/15"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400">
-                    {getCategoryLabel(project.category, lang)}
-                  </span>
-                  <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
-                    {project.year}
-                  </span>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {visibleProjects.map((project) => {
+            const cat = CATEGORY_MAP[project.category];
+            return (
+              <div
+                key={project.id}
+                className="bento-card-hover flex flex-col justify-between p-5"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${cat.badgeClass}`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${cat.dotClass}`} />
+                      {getCategoryLabel(project.category, lang)}
+                    </span>
+                    <span className="font-mono text-[11px] font-semibold text-slate-400">
+                      {project.year}
+                    </span>
+                  </div>
+                  <div className="mt-3 flex items-center gap-3">
+                    <ProjectIcon
+                      icon={project.icon}
+                      accentColor={project.accentColor}
+                      size="sm"
+                    />
+                    <h3
+                      onClick={() => onOpenDetail(project)}
+                      className="cursor-pointer text-sm font-extrabold text-slate-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-300"
+                    >
+                      {project.title}
+                    </h3>
+                  </div>
+                  <p className="mt-2 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">
+                    {project.tagline}
+                  </p>
                 </div>
-                <h3
-                  onClick={() => onOpenDetail(project)}
-                  className="mt-1.5 cursor-pointer text-sm font-bold text-zinc-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
-                >
-                  {project.title}
-                </h3>
-                <p className="mt-1 line-clamp-1 text-xs text-zinc-500 dark:text-zinc-400">
-                  {project.tagline}
-                </p>
-              </div>
 
-              <div className="mt-4 flex items-center justify-between gap-2 border-t border-zinc-200/60 pt-3 dark:border-white/[0.05]">
-                <div className="flex items-center gap-1.5">
-                  {project.liveUrl && (
+                <div className="mt-4 flex items-center justify-between gap-2 border-t border-indigo-100/70 pt-3.5 dark:border-indigo-500/15">
+                  <div className="flex items-center gap-1.5">
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="gemini-btn-primary inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[11px] font-bold"
+                      >
+                        <span>{t.openApp}</span>
+                        <ArrowUpRight className="h-3 w-3" />
+                      </a>
+                    )}
                     <a
-                      href={project.liveUrl}
+                      href={project.githubUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 rounded-md bg-zinc-900 px-2.5 py-1 text-[11px] font-semibold text-white dark:bg-white dark:text-zinc-950"
+                      className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 hover:border-indigo-300 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200"
                     >
-                      <span>{t.openApp}</span>
-                      <ArrowUpRight className="h-3 w-3" />
+                      <Github className="h-3 w-3" />
+                      <span>Repo</span>
                     </a>
-                  )}
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 rounded-md border border-zinc-200 px-2 py-1 text-[11px] font-medium text-zinc-600 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-300 dark:hover:text-white"
-                  >
-                    <Github className="h-3 w-3" />
-                    <span>Repo</span>
-                  </a>
-                </div>
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={() => onOpenDetail(project)}
-                  className="font-mono text-[11px] text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
-                >
-                  Details →
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => onOpenDetail(project)}
+                    className="font-mono text-[11px] font-bold text-indigo-600 hover:underline dark:text-indigo-300"
+                  >
+                    Chi tiết →
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
     </div>

@@ -1,4 +1,17 @@
-import { ArrowUpRight, Copy, FileText, Github, Mail, Settings2 } from 'lucide-react';
+import {
+  ArrowUpRight,
+  Award,
+  BrainCircuit,
+  Cloud,
+  Code2,
+  Copy,
+  FileText,
+  Github,
+  GraduationCap,
+  Mail,
+  Settings2,
+  Sparkles,
+} from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminManagerModal } from './components/AdminManagerModal';
 import { BentoHero } from './components/BentoHero';
@@ -280,8 +293,44 @@ export function App() {
   const tContact = UI_DICT[lang].contact;
   const tFooter = UI_DICT[lang].footer;
 
+  const researchCardStyles = [
+    {
+      icon: BrainCircuit,
+      badge: 'border-violet-300/70 bg-violet-500/10 text-violet-700 dark:border-violet-400/30 dark:bg-violet-500/20 dark:text-violet-300',
+      iconBox: 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-md shadow-violet-500/25',
+    },
+    {
+      icon: Award,
+      badge: 'border-blue-300/70 bg-blue-500/10 text-blue-700 dark:border-blue-400/30 dark:bg-blue-500/20 dark:text-blue-300',
+      iconBox: 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/25',
+    },
+    {
+      icon: GraduationCap,
+      badge: 'border-emerald-300/70 bg-emerald-500/10 text-emerald-700 dark:border-emerald-400/30 dark:bg-emerald-500/20 dark:text-emerald-300',
+      iconBox: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/25',
+    },
+  ];
+
+  const skillCardStyles = [
+    {
+      icon: Code2,
+      iconBox: 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-md shadow-blue-500/20',
+      pillHover: 'hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 dark:hover:border-blue-400/40 dark:hover:bg-blue-500/15 dark:hover:text-blue-200',
+    },
+    {
+      icon: BrainCircuit,
+      iconBox: 'bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-md shadow-purple-500/20',
+      pillHover: 'hover:border-purple-300 hover:bg-purple-50 hover:text-purple-700 dark:hover:border-purple-400/40 dark:hover:bg-purple-500/15 dark:hover:text-purple-200',
+    },
+    {
+      icon: Cloud,
+      iconBox: 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/20',
+      pillHover: 'hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:border-emerald-400/40 dark:hover:bg-emerald-500/15 dark:hover:text-emerald-200',
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-zinc-900 transition-colors dark:bg-[#09090B] dark:text-zinc-100">
+    <div className="gemini-mesh-bg min-h-screen bg-[#F4F7FB] text-slate-900 transition-colors dark:bg-[#0B0F19] dark:text-slate-100">
       {/* 1. Clean Sticky Navbar (64px) */}
       <Navbar
         viewMode={viewMode}
@@ -293,14 +342,14 @@ export function App() {
         onOpenCommandPalette={() => setCommandOpen(true)}
       />
 
-      {/* Main Content Container (max-w-5xl mx-auto) */}
-      <main className="relative mx-auto max-w-5xl px-4 pb-20 sm:px-6">
+      {/* Main Content Container (max-w-7xl mx-auto) */}
+      <main className="relative mx-auto max-w-7xl px-4 pb-20 sm:px-6">
         {viewMode === 'portfolio' ? (
           <>
-            {/* HERO SECTION */}
+            {/* BENTO HERO SECTION */}
             <BentoHero
               lang={lang}
-              onCopyEmail={() => handleCopyText('Email', PROFILE_CONFIG.email)}
+              onCopyEmail={handleCopyText}
               onOpenResume={() => setResumeOpen(true)}
             />
 
@@ -318,204 +367,221 @@ export function App() {
             />
 
             {/* 02 · RESEARCH & EXPERIENCE (#research) */}
-            <section
-              id="research"
-              className="scroll-mt-20 border-t border-zinc-200/80 py-14 dark:border-white/[0.06] sm:py-16"
-            >
+            <section id="research" className="scroll-mt-20 py-10 sm:py-12">
               <div className="max-w-2xl">
-                <div className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                  {lang === 'vi'
-                    ? '02 · Nghiên cứu & Đào tạo'
-                    : '02 · Research & Academic background'}
-                </div>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-                  {tResearch.title}
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/90 px-3 py-1 font-mono text-xs font-bold text-indigo-700 dark:border-indigo-400/25 dark:bg-indigo-500/15 dark:text-indigo-300">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+                  {tResearch.eyebrow}
+                </span>
+                <h2 className="mt-2.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+                  <span className="gemini-gradient-text">{tResearch.title}</span>
                 </h2>
               </div>
 
-              <div className="mt-8 divide-y divide-zinc-200/70 dark:divide-white/[0.06]">
-                {tResearch.items.map((item) => (
-                  <div
-                    key={item.role}
-                    className="grid grid-cols-1 gap-4 py-7 first:pt-0 last:pb-0 md:grid-cols-12 md:gap-8"
-                  >
-                    <div className="font-mono text-xs tabular-nums text-zinc-500 dark:text-zinc-400 md:col-span-3 md:pt-1">
-                      {item.period}
-                    </div>
-                    <div className="space-y-2.5 md:col-span-9">
+              <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
+                {tResearch.items.map((item, idx) => {
+                  const style = researchCardStyles[idx % researchCardStyles.length];
+                  const Icon = style.icon;
+                  return (
+                    <div
+                      key={item.role}
+                      className="bento-card-hover flex h-full flex-col justify-between p-6"
+                    >
                       <div>
-                        <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${style.iconBox}`}>
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <span className={`rounded-full border px-3 py-0.5 font-mono text-xs font-bold tabular-nums ${style.badge}`}>
+                            {item.period}
+                          </span>
+                        </div>
+
+                        <h3 className="mt-4 text-base font-extrabold text-slate-900 dark:text-white">
                           {item.role}
                         </h3>
-                        <p className="mt-0.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                        <p className="mt-1 text-xs font-bold text-indigo-600 dark:text-indigo-300">
                           {item.org}
                         </p>
+                        <p className="mt-2.5 text-xs leading-relaxed text-slate-600 dark:text-slate-300 sm:text-sm">
+                          {item.summary}
+                        </p>
                       </div>
-                      <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
-                        {item.summary}
-                      </p>
-                      <ul className="space-y-1.5 pt-1">
+
+                      <ul className="mt-4 space-y-2 border-t border-indigo-100/80 pt-4 dark:border-indigo-500/15">
                         {item.bullets.map((bullet, i) => (
                           <li
                             key={i}
-                            className="flex items-start gap-2.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-sm"
+                            className="flex items-start gap-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300"
                           >
-                            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
                             <span>{bullet}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
             {/* 03 · TECH ARSENAL (#skills) */}
-            <section
-              id="skills"
-              className="scroll-mt-20 border-t border-zinc-200/80 py-14 dark:border-white/[0.06] sm:py-16"
-            >
+            <section id="skills" className="scroll-mt-20 py-10 sm:py-12">
               <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                 <div className="max-w-2xl">
-                  <div className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                    {lang === 'vi' ? '03 · Năng lực công nghệ' : '03 · Tech stack'}
-                  </div>
-                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-                    {tSkills.title}
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/90 px-3 py-1 font-mono text-xs font-bold text-indigo-700 dark:border-indigo-400/25 dark:bg-indigo-500/15 dark:text-indigo-300">
+                    <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+                    {tSkills.eyebrow}
+                  </span>
+                  <h2 className="mt-2.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+                    <span className="gemini-gradient-text">{tSkills.title}</span>
                   </h2>
                 </div>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-300">
                   {lang === 'vi'
-                    ? 'Bấm vào từng công nghệ để lọc dự án tương ứng'
-                    : 'Click any technology to filter matching projects'}
+                    ? 'Bấm vào bất kỳ công nghệ nào để lọc dự án tương ứng'
+                    : 'Click any technology pill to filter matching projects'}
                 </span>
               </div>
 
-              <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-                {tSkills.groups.map((group) => (
-                  <div
-                    key={group.title}
-                    className="flex h-full flex-col justify-between rounded-xl border border-zinc-200/85 bg-white p-6 dark:border-white/[0.08] dark:bg-[#111113]"
-                  >
-                    <div>
-                      <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                        {group.title}
-                      </h3>
-                      <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-                        {group.subtitle}
-                      </p>
+              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+                {tSkills.groups.map((group, idx) => {
+                  const style = skillCardStyles[idx % skillCardStyles.length];
+                  const Icon = style.icon;
+                  return (
+                    <div
+                      key={group.title}
+                      className="bento-card-hover flex h-full flex-col justify-between p-6"
+                    >
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${style.iconBox}`}>
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+                              {group.title}
+                            </h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                              {group.subtitle}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 flex flex-wrap gap-2 border-t border-indigo-100/80 pt-4 dark:border-indigo-500/15">
+                        {group.items.map((skill) => (
+                          <button
+                            key={skill}
+                            type="button"
+                            onClick={() => handleFilterBySkill(skill)}
+                            className={`rounded-xl border border-indigo-100 bg-slate-50/90 px-3 py-1.5 font-mono text-xs font-semibold text-slate-700 transition dark:border-indigo-500/20 dark:bg-white/[0.04] dark:text-slate-200 ${style.pillHover}`}
+                          >
+                            {skill}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <div className="mt-5 flex flex-wrap gap-1.5">
-                      {group.items.map((skill) => (
-                        <button
-                          key={skill}
-                          type="button"
-                          onClick={() => handleFilterBySkill(skill)}
-                          className="rounded-md border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 font-mono text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
-                        >
-                          {skill}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
             {/* 04 · CONTACT (#contact) */}
-            <section
-              id="contact"
-              className="scroll-mt-20 border-t border-zinc-200/80 py-14 dark:border-white/[0.06] sm:py-16"
-            >
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center">
-                <div className="lg:col-span-7">
-                  <div className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                    {lang === 'vi' ? '04 · Liên hệ & Kết nối' : '04 · Contact'}
-                  </div>
-                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-                    {tContact.title}
-                  </h2>
-                  <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                    {tContact.desc}
-                  </p>
+            <section id="contact" className="scroll-mt-20 py-10 sm:py-12">
+              <div className="bento-card relative overflow-hidden p-6 sm:p-8">
+                <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gradient-to-br from-blue-500/15 via-indigo-500/15 to-purple-500/15 blur-3xl" />
 
-                  <div className="mt-6 flex flex-wrap items-center gap-2.5">
-                    <a
-                      href={`mailto:${PROFILE_CONFIG.email}`}
-                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-zinc-900 px-4 text-xs font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
-                    >
-                      <Mail className="h-3.5 w-3.5" />
-                      <span>{tContact.sendMailBtn}</span>
-                    </a>
+                <div className="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center">
+                  <div className="lg:col-span-7">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/90 px-3 py-1 font-mono text-xs font-bold text-indigo-700 dark:border-indigo-400/25 dark:bg-indigo-500/15 dark:text-indigo-300">
+                      <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+                      {tContact.eyebrow}
+                    </span>
+                    <h2 className="mt-2.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+                      <span className="gemini-gradient-text">{tContact.title}</span>
+                    </h2>
+                    <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                      {tContact.desc}
+                    </p>
 
-                    <button
-                      type="button"
-                      onClick={() => setResumeOpen(true)}
-                      className="inline-flex h-10 items-center gap-2 rounded-lg border border-zinc-200/90 bg-white px-4 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:bg-[#111113] dark:text-zinc-200 dark:hover:bg-white/[0.06]"
-                    >
-                      <FileText className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
-                      <span>{tContact.openResumeBtn}</span>
-                    </button>
+                    <div className="mt-6 flex flex-wrap items-center gap-3">
+                      <a
+                        href={`mailto:${PROFILE_CONFIG.email}`}
+                        className="gemini-btn-primary inline-flex h-10 items-center gap-2 rounded-xl px-5 text-xs font-bold"
+                      >
+                        <Mail className="h-3.5 w-3.5" />
+                        <span>{tContact.sendMailBtn}</span>
+                      </a>
 
-                    <a
-                      href={PROFILE_CONFIG.githubUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-white px-3.5 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-300 hover:text-zinc-900 dark:border-white/10 dark:bg-[#111113] dark:text-zinc-300 dark:hover:border-white/20 dark:hover:text-white"
-                    >
-                      <Github className="h-3.5 w-3.5" />
-                      <span>GitHub</span>
-                      <ArrowUpRight className="h-3 w-3" />
-                    </a>
-                  </div>
-                </div>
+                      <button
+                        type="button"
+                        onClick={() => setResumeOpen(true)}
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50/80 px-4 text-xs font-bold text-indigo-700 transition hover:bg-indigo-100 dark:border-indigo-400/30 dark:bg-indigo-500/15 dark:text-indigo-200"
+                      >
+                        <FileText className="h-3.5 w-3.5" />
+                        <span>{tContact.openResumeBtn}</span>
+                      </button>
 
-                {/* Symmetrical Email Copy Rows */}
-                <div className="space-y-3 lg:col-span-5">
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200/85 bg-white px-4 py-3.5 dark:border-white/[0.08] dark:bg-[#111113]">
-                    <div className="min-w-0">
-                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                        {tContact.primaryEmailLabel}
-                      </div>
-                      <div className="mt-0.5 truncate font-mono text-xs font-medium text-zinc-900 dark:text-zinc-100">
-                        {PROFILE_CONFIG.email}
-                      </div>
+                      <a
+                        href={PROFILE_CONFIG.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200"
+                      >
+                        <Github className="h-3.5 w-3.5" />
+                        <span>GitHub</span>
+                        <ArrowUpRight className="h-3 w-3" />
+                      </a>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopyText(tContact.primaryEmailLabel, PROFILE_CONFIG.email)
-                      }
-                      className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-zinc-50 px-2.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:text-white"
-                    >
-                      <Copy className="h-3 w-3" />
-                      <span>{tContact.copyBtn}</span>
-                    </button>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200/85 bg-white px-4 py-3.5 dark:border-white/[0.08] dark:bg-[#111113]">
-                    <div className="min-w-0">
-                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                        {tContact.academicEmailLabel}
+                  {/* Symmetrical Email Copy Cards */}
+                  <div className="space-y-3 lg:col-span-5">
+                    <div className="flex items-center justify-between gap-3 rounded-2xl border border-indigo-100 bg-gradient-to-r from-blue-50/60 to-indigo-50/40 px-4 py-3.5 dark:border-indigo-500/20 dark:from-blue-500/10 dark:to-indigo-500/5">
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-indigo-600 dark:text-indigo-300">
+                          {tContact.primaryEmailLabel}
+                        </div>
+                        <div className="mt-0.5 truncate font-mono text-xs font-bold text-slate-900 dark:text-white">
+                          {PROFILE_CONFIG.email}
+                        </div>
                       </div>
-                      <div className="mt-0.5 truncate font-mono text-xs font-medium text-zinc-900 dark:text-zinc-100">
-                        {PROFILE_CONFIG.academicEmail}
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleCopyText(tContact.primaryEmailLabel, PROFILE_CONFIG.email)
+                        }
+                        className="gemini-btn-primary inline-flex h-8 shrink-0 items-center gap-1.5 rounded-xl px-3 text-xs font-bold"
+                      >
+                        <Copy className="h-3 w-3" />
+                        <span>{tContact.copyBtn}</span>
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopyText(
-                          tContact.academicEmailLabel,
-                          PROFILE_CONFIG.academicEmail
-                        )
-                      }
-                      className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-zinc-50 px-2.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:text-white"
-                    >
-                      <Copy className="h-3 w-3" />
-                      <span>{tContact.copyBtn}</span>
-                    </button>
+
+                    <div className="flex items-center justify-between gap-3 rounded-2xl border border-indigo-100 bg-gradient-to-r from-purple-50/60 to-pink-50/40 px-4 py-3.5 dark:border-indigo-500/20 dark:from-purple-500/10 dark:to-pink-500/5">
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-purple-600 dark:text-purple-300">
+                          {tContact.academicEmailLabel}
+                        </div>
+                        <div className="mt-0.5 truncate font-mono text-xs font-bold text-slate-900 dark:text-white">
+                          {PROFILE_CONFIG.academicEmail}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleCopyText(
+                            tContact.academicEmailLabel,
+                            PROFILE_CONFIG.academicEmail
+                          )
+                        }
+                        className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-xl border border-indigo-200 bg-white px-3 text-xs font-bold text-indigo-700 transition hover:bg-indigo-50 dark:border-indigo-400/30 dark:bg-white/[0.06] dark:text-indigo-200"
+                      >
+                        <Copy className="h-3 w-3" />
+                        <span>{tContact.copyBtn}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -540,18 +606,18 @@ export function App() {
           />
         )}
 
-        {/* Minimalist Footer */}
-        <footer className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-zinc-200/80 pt-8 text-xs text-zinc-500 dark:border-white/[0.06] dark:text-zinc-500 sm:flex-row">
+        {/* Footer */}
+        <footer className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-indigo-100 pt-6 text-xs text-slate-500 dark:border-indigo-500/15 dark:text-slate-400 sm:flex-row">
           <div>
             © {new Date().getFullYear()}{' '}
-            <span className="font-medium text-zinc-800 dark:text-zinc-300">
+            <span className="font-bold text-indigo-600 dark:text-indigo-300">
               {PROFILE_CONFIG.fullName}
             </span>{' '}
-            · VNU-HUS K69 · {tFooter.rights}
+            · VNU-HUS K69 Computer &amp; Information Science
           </div>
 
           <div className="flex items-center gap-3 font-mono text-[11px]">
-            <span>1–4 Sections</span>
+            <span>Phím 1–4</span>
             <span>·</span>
             <span>Ctrl+K</span>
             <button
@@ -562,7 +628,7 @@ export function App() {
               }}
               title={tFooter.manageTooltip}
               aria-label={tFooter.manageTooltip}
-              className="rounded p-1 text-zinc-400 opacity-60 transition-colors hover:bg-zinc-200/60 hover:text-zinc-700 hover:opacity-100 dark:hover:bg-white/[0.06] dark:hover:text-zinc-300"
+              className="rounded-lg p-1.5 text-indigo-500 transition hover:bg-indigo-50 dark:hover:bg-indigo-500/15"
             >
               <Settings2 className="h-3.5 w-3.5" />
             </button>

@@ -1,7 +1,8 @@
-import { ArrowUpRight, Code2, Layers } from 'lucide-react';
+import { ArrowUpRight, Code2, Layers, Pin } from 'lucide-react';
 import { getCategoryLabel, UI_DICT } from '../data/i18n';
+import { CATEGORY_MAP } from '../data/projectsConfig';
 import type { DevHubProject, Language, ServerHealthRecord } from '../types/project';
-import { ServerStatusPill } from './ProjectIcon';
+import { ProjectIcon, ServerStatusPill } from './ProjectIcon';
 
 interface ProjectCardProps {
   project: DevHubProject;
@@ -21,23 +22,45 @@ export function ProjectCard({
   onSelectTech,
 }: ProjectCardProps) {
   const t = UI_DICT[lang].projects;
+  const category = CATEGORY_MAP[project.category];
   const categoryLabel = getCategoryLabel(project.category, lang);
   const visibleTechs = project.techStack.slice(0, 5);
   const topMetrics = project.metrics ? project.metrics.slice(0, 3) : [];
 
   return (
-    <article className="group flex h-full flex-col justify-between rounded-xl border border-zinc-200/85 bg-white p-6 transition-colors duration-150 hover:border-zinc-300 dark:border-white/[0.08] dark:bg-[#111113] dark:hover:border-white/[0.16]">
+    <article className="bento-card-hover group flex h-full flex-col justify-between p-6">
       <div className="flex flex-1 flex-col justify-between">
         <div>
-          {/* 1. Header Row: Category + Year (left) & Live Status (right) */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className="rounded-md border border-zinc-200/90 bg-zinc-50 px-2 py-0.5 font-mono text-[11px] text-zinc-600 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-zinc-300">
-                {categoryLabel}
-              </span>
-              <span className="font-mono text-xs tabular-nums text-zinc-400 dark:text-zinc-500">
-                {project.year}
-              </span>
+          {/* 1. Header Row: Colorful ProjectIcon + Category Badge + Live Status */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3.5">
+              <ProjectIcon
+                icon={project.icon}
+                accentColor={project.accentColor}
+                size="md"
+              />
+              <div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${category.badgeClass}`}
+                  >
+                    <span className={`h-1.5 w-1.5 rounded-full ${category.dotClass}`} />
+                    {categoryLabel}
+                  </span>
+                  {project.pinned && (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-300">
+                      <Pin className="h-2.5 w-2.5" />
+                      {lang === 'vi' ? 'Tiêu biểu' : 'Featured'}
+                    </span>
+                  )}
+                </div>
+                <h3
+                  onClick={() => onOpenDetail(project)}
+                  className="mt-1.5 cursor-pointer text-lg font-extrabold tracking-tight text-slate-900 transition-colors group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-300"
+                >
+                  {project.title}
+                </h3>
+              </div>
             </div>
 
             <ServerStatusPill
@@ -45,32 +68,32 @@ export function ProjectCard({
               health={health}
               onPing={onPingServer}
               lang={lang}
+              compact
             />
           </div>
 
-          {/* 2. Title & 2-Line Overview */}
-          <h3
-            onClick={() => onOpenDetail(project)}
-            className="mt-3.5 cursor-pointer text-lg font-semibold tracking-tight text-zinc-900 transition-colors group-hover:text-zinc-600 dark:text-zinc-100 dark:group-hover:text-white"
-          >
-            {project.title}
-          </h3>
+          {/* 2. Tagline Highlight + 2-Line Overview */}
+          <div className="mt-4 rounded-2xl border border-indigo-100/80 bg-gradient-to-r from-indigo-50/70 via-blue-50/50 to-purple-50/50 px-3.5 py-2.5 dark:border-indigo-500/15 dark:from-indigo-500/10 dark:via-blue-500/5 dark:to-purple-500/10">
+            <p className="line-clamp-2 text-xs font-semibold leading-relaxed text-indigo-950 dark:text-indigo-200">
+              {project.tagline}
+            </p>
+          </div>
 
-          <p className="mt-2 line-clamp-2 min-h-[40px] text-sm leading-5 text-zinc-600 dark:text-zinc-400">
+          <p className="mt-3 line-clamp-2 min-h-[40px] text-xs leading-relaxed text-slate-600 dark:text-slate-300 sm:text-sm">
             {project.overview}
           </p>
         </div>
 
-        <div className="mt-5 space-y-4">
+        <div className="mt-4 space-y-3.5">
           {/* 3a. Symmetrical 3-Column Quantitative Metrics Strip */}
           {topMetrics.length > 0 && (
-            <div className="grid grid-cols-3 gap-2 rounded-lg border border-zinc-200/70 bg-zinc-50/70 px-3 py-2 dark:border-white/[0.06] dark:bg-white/[0.02]">
+            <div className="grid grid-cols-3 gap-2 rounded-2xl border border-slate-200/70 bg-slate-50/80 px-3 py-2.5 dark:border-white/[0.07] dark:bg-white/[0.03]">
               {topMetrics.map((m) => (
                 <div key={m.label} className="min-w-0">
-                  <div className="truncate text-[11px] text-zinc-500 dark:text-zinc-400">
+                  <div className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
                     {m.label}
                   </div>
-                  <div className="mt-0.5 truncate font-mono text-xs font-medium tabular-nums text-zinc-900 dark:text-zinc-100">
+                  <div className="mt-0.5 truncate font-mono text-xs font-bold tabular-nums text-indigo-700 dark:text-indigo-300">
                     {m.value}
                   </div>
                 </div>
@@ -90,7 +113,7 @@ export function ProjectCard({
                     ? `Lọc dự án dùng ${tech}`
                     : `Filter projects by ${tech}`
                 }
-                className="rounded-md border border-zinc-200/70 bg-zinc-100/70 px-2 py-0.5 font-mono text-[11px] text-zinc-600 transition-colors hover:border-zinc-300 hover:bg-zinc-200/60 hover:text-zinc-900 dark:border-white/[0.06] dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:border-white/15 dark:hover:text-white"
+                className="rounded-lg border border-indigo-100 bg-white px-2.5 py-1 font-mono text-[11px] font-medium text-slate-600 shadow-2xs transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 dark:border-indigo-500/20 dark:bg-white/[0.04] dark:text-slate-300 dark:hover:border-indigo-400/40 dark:hover:text-indigo-200"
               >
                 {tech}
               </button>
@@ -100,13 +123,13 @@ export function ProjectCard({
       </div>
 
       {/* 4. Symmetrical Footer Actions */}
-      <div className="mt-5 flex items-center justify-between gap-2 border-t border-zinc-200/70 pt-4 dark:border-white/[0.06]">
+      <div className="mt-5 flex items-center justify-between gap-2 border-t border-indigo-100/80 pt-4 dark:border-indigo-500/15">
         <div className="flex items-center gap-2">
           <a
             href={project.liveUrl || project.githubUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-8 items-center gap-1 rounded-lg bg-zinc-900 px-3 text-xs font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+            className="gemini-btn-primary inline-flex h-9 items-center gap-1.5 rounded-xl px-3.5 text-xs font-bold"
           >
             <span>{t.liveDemo}</span>
             <ArrowUpRight className="h-3.5 w-3.5" />
@@ -116,9 +139,9 @@ export function ProjectCard({
             href={project.githubUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-zinc-200/90 bg-white px-3 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/10 dark:bg-white/[0.02] dark:text-zinc-300 dark:hover:bg-white/[0.06] dark:hover:text-white"
+            className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50/50 hover:text-indigo-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:border-indigo-400/40"
           >
-            <Code2 className="h-3.5 w-3.5 text-zinc-400" />
+            <Code2 className="h-3.5 w-3.5 text-indigo-500" />
             <span>{t.sourceCode}</span>
           </a>
         </div>
@@ -126,9 +149,9 @@ export function ProjectCard({
         <button
           type="button"
           onClick={() => onOpenDetail(project)}
-          className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.05] dark:hover:text-zinc-200"
+          className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50/60 px-3 text-xs font-bold text-indigo-700 transition hover:bg-indigo-100 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300 dark:hover:bg-indigo-500/20"
         >
-          <Layers className="h-3.5 w-3.5 text-zinc-400" />
+          <Layers className="h-3.5 w-3.5" />
           <span>{t.archDetails}</span>
         </button>
       </div>

@@ -9,11 +9,13 @@
   }
 
   body {
-    background-color: #fafafa;
+    background-color: #f4f7fb;
+    color: #0f172a;
   }
 
   .dark body {
-    background-color: #09090b;
+    background-color: #0b0f19;
+    color: #f1f5f9;
   }
 
   ::-webkit-scrollbar {
@@ -26,21 +28,43 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(161, 161, 170, 0.25);
+    background: rgba(99, 102, 241, 0.25);
     border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(161, 161, 170, 0.45);
+    background: rgba(99, 102, 241, 0.45);
   }
 }
 
+.gemini-mesh-bg {
+  background-image:
+    radial-gradient(at 15% 10%, rgba(56, 189, 248, 0.12) 0px, transparent 45%),
+    radial-gradient(at 85% 12%, rgba(139, 92, 246, 0.12) 0px, transparent 45%),
+    radial-gradient(at 50% 50%, rgba(99, 102, 241, 0.05) 0px, transparent 55%);
+}
+
+.dark .gemini-mesh-bg {
+  background-image:
+    radial-gradient(at 15% 10%, rgba(56, 189, 248, 0.14) 0px, transparent 45%),
+    radial-gradient(at 85% 12%, rgba(139, 92, 246, 0.15) 0px, transparent 45%),
+    radial-gradient(at 50% 60%, rgba(236, 72, 153, 0.06) 0px, transparent 55%);
+}
+
 .bento-card {
-  @apply relative rounded-2xl border border-zinc-200/80 bg-white/85 backdrop-blur-md transition-all duration-200 dark:border-white/[0.08] dark:bg-obsidian-900/80;
+  @apply relative rounded-3xl border border-indigo-100/90 bg-white/90 backdrop-blur-xl shadow-[0_8px_30px_rgb(59,130,246,0.06)] transition-all duration-300 dark:border-indigo-500/15 dark:bg-[#131B2E]/90 dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)];
 }
 
 .bento-card-hover {
-  @apply bento-card hover:border-zinc-300 dark:hover:border-white/[0.16];
+  @apply bento-card hover:-translate-y-0.5 hover:border-indigo-300/80 hover:shadow-[0_14px_36px_rgb(79,70,229,0.12)] dark:hover:border-indigo-400/35 dark:hover:shadow-[0_14px_36px_rgb(79,70,229,0.22)];
+}
+
+.gemini-gradient-text {
+  @apply bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-sky-400 dark:via-indigo-300 dark:to-purple-400;
+}
+
+.gemini-btn-primary {
+  @apply bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20 transition-all duration-200 hover:shadow-lg hover:shadow-indigo-500/30 hover:brightness-105 active:scale-[0.98];
 }
 
 @media print {
