@@ -175,6 +175,41 @@
       "icon": "brain",
       "accentColor": "violet",
       "pinned": true
+    },
+    {
+      "id": "finance-pro",
+      "repoName": "finance-pro",
+      "title": "Finance Pro — AI Voice Personal Finance",
+      "category": "study-life",
+      "year": "2026",
+      "order": 8,
+      "tagline": "Ứng dụng quản lý thu chi cá nhân Mobile-First với giọng nói tiếng Việt có sóng âm thời gian thực, AI Gemini và biểu đồ dòng tiền.",
+      "overview": "Web app tài chính cá nhân đa tài khoản (Next.js + Supabase) cho phép ghi thu/chi bằng giọng nói hoặc nhắn tin tự nhiên (\"mẹ cho 75k\", \"ăn phở 45k\"), tự phân biệt tiền cộng/trừ, nhiều ví, biểu đồ Donut + dòng tiền 12 tháng và hai giao diện Chi tiết / Đơn giản tối ưu cho điện thoại.",
+      "technicalHighlights": [
+        "Bộ phân tích tiếng Việt chạy cục bộ dưới 1ms (k/nghìn/lít/củ/trăm rưỡi, 'mẹ cho 75k' = tiền cộng) kết hợp Gemini có timeout 2,5s, LRU cache và circuit breaker; Optimistic UI cập nhật tức thì.",
+        "Sóng âm Web Audio API 60fps trên Canvas: đứng yên khi im lặng, biên độ tỷ lệ với âm lượng giọng nói nhờ RMS và noise gate thích ứng.",
+        "Bảo mật PBKDF2-HMAC-SHA256 (100.000 vòng + salt), Session Token có chữ ký chống giả mạo, lọc XSS, cô lập dữ liệu từng tài khoản (Supabase RLS); 115 kịch bản kiểm thử tự động."
+      ],
+      "architectureSummary": "Next.js 14 (Mobile-First UI) ↔ Gemini AI + Vietnamese NLP Parser ↔ Supabase Auth/PostgreSQL (RLS) với local fallback",
+      "metrics": [
+        { "label": "Voice", "value": "Waveform 60fps" },
+        { "label": "Security", "value": "PBKDF2-SHA256" },
+        { "label": "AI Engine", "value": "Gemini + NLP" },
+        { "label": "Test Cases", "value": "115 PASS" }
+      ],
+      "techStack": [
+        "Next.js 14",
+        "TypeScript",
+        "Gemini AI",
+        "Supabase",
+        "Web Audio API"
+      ],
+      "liveUrl": "",
+      "githubUrl": "https://github.com/Winter101006/finance-pro",
+      "serverType": "none",
+      "icon": "wallet",
+      "accentColor": "sky",
+      "pinned": true
     }
   ],
   "hiddenRepoNames": [

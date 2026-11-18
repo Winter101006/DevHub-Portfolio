@@ -90,6 +90,26 @@ export const PROJECT_EN_TRANSLATIONS: Record<string, ProjectTranslation> = {
       { label: 'Testing', value: 'JUnit 5 + MockMvc' },
     ],
   },
+  'finance-pro': {
+    title: 'Finance Pro — AI Voice Personal Finance',
+    tagline:
+      'Mobile-first personal finance app with real-time Vietnamese voice input, live waveform, Gemini AI and cashflow charts.',
+    overview:
+      'Multi-account personal finance web app (Next.js + Supabase) that logs income/expenses by voice or natural text ("mom gave 75k", "pho 45k"), correctly separates money in vs. out, supports multiple wallets, Donut + 12-month cashflow charts, and Detailed / Simple interfaces tuned for phones.',
+    technicalHighlights: [
+      'Sub-millisecond local Vietnamese parser (k/nghìn/lít/củ/trăm rưỡi slang, "mẹ cho 75k" = income) combined with Gemini under a 2.5s timeout, LRU cache and circuit breaker; Optimistic UI updates instantly.',
+      '60fps Web Audio API canvas waveform: flat when silent, amplitude proportional to voice loudness via RMS and an adaptive noise gate.',
+      'PBKDF2-HMAC-SHA256 (100k iterations + salt), signed session tokens, XSS sanitization, per-account data isolation (Supabase RLS) and 115 automated test scenarios.',
+    ],
+    architectureSummary:
+      'Next.js 14 (Mobile-First UI) ↔ Gemini AI + Vietnamese NLP Parser ↔ Supabase Auth/PostgreSQL (RLS) with local fallback',
+    metrics: [
+      { label: 'Voice', value: 'Waveform 60fps' },
+      { label: 'Security', value: 'PBKDF2-SHA256' },
+      { label: 'AI Engine', value: 'Gemini + NLP' },
+      { label: 'Test Cases', value: '115 PASS' },
+    ],
+  },
   'custom-nutrition-ai': {
     title: 'Student Nutrition & Calorie AI Tracker',
     tagline:
